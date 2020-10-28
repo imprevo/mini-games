@@ -1,0 +1,44 @@
+{
+  "name": "mini-games",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "NODE_ENV=development rollup -c -w",
+    "build": "NODE_ENV=production rollup -c"
+  },
+  "author": "Evgeniy Mokeev",
+  "license": "ISC",
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^16.0.0",
+    "@rollup/plugin-html": "^0.2.0",
+    "@rollup/plugin-node-resolve": "^10.0.0",
+    "@rollup/plugin-typescript": "^6.1.0",
+    "@typescript-eslint/eslint-plugin": "^4.6.0",
+    "@typescript-eslint/parser": "^4.6.0",
+    "eslint": "^7.12.1",
+    "eslint-plugin-import": "^2.22.1",
+    "husky": "^4.3.0",
+    "lint-staged": "^10.5.0",
+    "phaser": "^3.24.1",
+    "prettier": "^2.1.2",
+    "rollup": "^2.32.1",
+    "rollup-plugin-postcss": "^3.1.8",
+    "rollup-plugin-serve": "^1.0.4",
+    "rollup-plugin-terser": "^7.0.2",
+    "typescript": "^4.0.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,ts}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{html,json,yml}": "prettier --write",
+    "*.{svg}": "prettier --parser html --write"
+  }
+}
