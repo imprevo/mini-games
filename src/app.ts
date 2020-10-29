@@ -1,11 +1,13 @@
 import * as Phaser from 'phaser';
 
-const clamp = (val: number, min: number, max: number) =>
-  Math.max(min, Math.min(max, val));
-
 const WIDTH = 800;
 const HEIGHT = 600;
 const BALL_SPEED = 200;
+const BALL_SPEED_RATE = 1.15;
+
+const clamp = (val: number, min: number, max: number) =>
+  Math.max(min, Math.min(max, val));
+const increaseBallSpeed = (speed: number) => Math.abs(speed * BALL_SPEED_RATE);
 
 type GameObjectWithPhysics = Phaser.GameObjects.Shape & {
   body: Phaser.Physics.Arcade.Body;
@@ -104,10 +106,10 @@ export class PongScene extends Phaser.Scene {
         this.side = 2;
       } else {
         if (this.physics.overlap(this.ball, this.player1)) {
-          ballBody.setVelocityX(BALL_SPEED);
+          ballBody.setVelocityX(increaseBallSpeed(ballBody.velocity.x));
         }
         if (this.physics.overlap(this.ball, this.player2)) {
-          ballBody.setVelocityX(-BALL_SPEED);
+          ballBody.setVelocityX(-increaseBallSpeed(ballBody.velocity.x));
         }
         if (ballBody.y > HEIGHT - ballBody.height || ballBody.y < 0) {
           ballBody.setVelocityY(ballBody.velocity.y * -1);
