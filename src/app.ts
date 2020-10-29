@@ -18,9 +18,13 @@ type PlayerKeys = Record<'up' | 'down' | 'start', Phaser.Input.Keyboard.Key>;
 export class PongScene extends Phaser.Scene {
   player1: GameObjectWithPhysics;
   player1Keys: PlayerKeys;
+  player1ScoreLabel: Phaser.GameObjects.Text;
+  player1Score = 0;
 
   player2: GameObjectWithPhysics;
   player2Keys: PlayerKeys;
+  player2ScoreLabel: Phaser.GameObjects.Text;
+  player2Score = 0;
 
   ball: GameObjectWithPhysics;
 
@@ -36,6 +40,18 @@ export class PongScene extends Phaser.Scene {
   }
 
   create() {
+    this.add.line(WIDTH / 2, 0, 0, 0, 0, HEIGHT, 0xffffff).setOrigin(0, 0);
+    this.player1ScoreLabel = this.add
+      .text(WIDTH / 4, HEIGHT / 2, this.player1Score.toString(), {
+        fontSize: HEIGHT / 4,
+      })
+      .setOrigin(0.5);
+    this.player2ScoreLabel = this.add
+      .text(WIDTH - WIDTH / 4, HEIGHT / 2, this.player2Score.toString(), {
+        fontSize: HEIGHT / 4,
+      })
+      .setOrigin(0.5);
+
     this.player1 = this.add.rectangle(
       20,
       HEIGHT / 2,
@@ -101,9 +117,13 @@ export class PongScene extends Phaser.Scene {
       if (ballBody.x < 0) {
         this.isStart = false;
         this.side = 1;
+        this.player2Score++;
+        this.player2ScoreLabel.text = this.player2Score.toString();
       } else if (ballBody.x > WIDTH - ballBody.width) {
         this.isStart = false;
         this.side = 2;
+        this.player1Score++;
+        this.player1ScoreLabel.text = this.player1Score.toString();
       } else {
         if (this.physics.overlap(this.ball, this.player1)) {
           ballBody.setVelocityX(increaseBallSpeed(ballBody.velocity.x));
