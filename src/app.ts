@@ -11,10 +11,12 @@ type GameObjectWithPhysics = Phaser.GameObjects.Shape & {
 };
 
 export class PongScene extends Phaser.Scene {
-  player: GameObjectWithPhysics;
+  player1: GameObjectWithPhysics;
+  player2: GameObjectWithPhysics;
   ball: GameObjectWithPhysics;
 
   isStart = false;
+  side = 1;
 
   constructor() {
     super({
@@ -25,39 +27,62 @@ export class PongScene extends Phaser.Scene {
   }
 
   create() {
-    this.player = this.add.rectangle(
+    this.player1 = this.add.rectangle(
       40,
-      300,
+      HEIGHT / 2,
       20,
       100,
       0xffffff
     ) as GameObjectWithPhysics;
-    this.physics.add.existing(this.player);
+    this.physics.add.existing(this.player1);
 
-    this.ball = this.add.circle(60, 300, 10, 0xff0000) as GameObjectWithPhysics;
+    this.player2 = this.add.rectangle(
+      WIDTH - 40,
+      HEIGHT / 2,
+      20,
+      100,
+      0xffffff
+    ) as GameObjectWithPhysics;
+    this.physics.add.existing(this.player2);
+
+    this.ball = this.add.circle(
+      -100,
+      -100,
+      10,
+      0xff0000
+    ) as GameObjectWithPhysics;
     this.physics.add.existing(this.ball);
   }
 
   update() {
     const cursorKeys = this.input.keyboard.createCursorKeys();
-    const playerBody = this.player.body;
+    const player1Body = this.player1.body;
+    const player2Body = this.player2.body;
     const ballBody = this.ball.body;
 
     if (cursorKeys.up.isDown) {
-      playerBody.setVelocityY(-500);
+      player1Body.setVelocityY(-500);
     } else if (cursorKeys.down.isDown) {
-      playerBody.setVelocityY(500);
+      player1Body.setVelocityY(500);
     } else {
-      playerBody.setVelocityY(0);
+      player1Body.setVelocityY(0);
     }
 
-    playerBody.y = clamp(playerBody.y, 0, HEIGHT - playerBody.height);
+    player1Body.y = clamp(player1Body.y, 0, HEIGHT - player1Body.height);
+    player2Body.y = clamp(player2Body.y, 0, HEIGHT - player2Body.height);
 
     if (this.isStart) {
-      if (ballBody.x > WIDTH - ballBody.width || ballBody.x < 0) {
+      if (ballBody.x < 0) {
         this.isStart = false;
+        this.side = 1;
+      } else if (ballBody.x > WIDTH - ballBody.width) {
+        this.isStart = false;
+        this.side = 2;
       } else {
-        if (this.physics.overlap(this.ball, this.player)) {
+        if (
+          this.physics.overlap(this.ball, this.player1) ||
+          this.physics.overlap(this.ball, this.player2)
+        ) {
           ballBody.setVelocityX(ballBody.velocity.x * -1);
         }
         if (ballBody.y > HEIGHT - ballBody.height || ballBody.y < 0) {
@@ -68,8 +93,13 @@ export class PongScene extends Phaser.Scene {
       this.isStart = true;
       ballBody.setVelocity(200, 200);
     } else {
-      ballBody.x = playerBody.x + playerBody.width;
-      ballBody.y = playerBody.y + (playerBody.height - ballBody.height) / 2;
+      if (this.side == 1) {
+        ballBody.x = player1Body.x + player1Body.width;
+        ballBody.y = player1Body.y + (player1Body.height - ballBody.height) / 2;
+      } else {
+        ballBody.x = player2Body.x - ballBody.width;
+        ballBody.y = player2Body.y + (player2Body.height - ballBody.height) / 2;
+      }
     }
   }
 }
