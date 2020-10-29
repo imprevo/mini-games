@@ -55,11 +55,14 @@ export class PongScene extends Phaser.Scene {
 
     if (this.isStart) {
       if (ballBody.x > WIDTH - ballBody.width || ballBody.x < 0) {
-        ballBody.setVelocityX(ballBody.velocity.x * -1);
-      }
-
-      if (ballBody.y > HEIGHT - ballBody.height || ballBody.y < 0) {
-        ballBody.setVelocityY(ballBody.velocity.y * -1);
+        this.isStart = false;
+      } else {
+        if (this.physics.overlap(this.ball, this.player)) {
+          ballBody.setVelocityX(ballBody.velocity.x * -1);
+        }
+        if (ballBody.y > HEIGHT - ballBody.height || ballBody.y < 0) {
+          ballBody.setVelocityY(ballBody.velocity.y * -1);
+        }
       }
     } else if (cursorKeys.space.isDown) {
       this.isStart = true;
