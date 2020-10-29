@@ -1,5 +1,8 @@
 import * as Phaser from 'phaser';
 
+const clamp = (val: number, min: number, max: number) =>
+  Math.max(min, Math.min(max, val));
+
 const WIDTH = 800;
 const HEIGHT = 600;
 
@@ -47,6 +50,8 @@ export class PongScene extends Phaser.Scene {
     } else {
       playerBody.setVelocityY(0);
     }
+
+    playerBody.y = clamp(playerBody.y, 0, HEIGHT - playerBody.height);
 
     if (this.isStart) {
       if (ballBody.x > WIDTH - ballBody.width || ballBody.x < 0) {
