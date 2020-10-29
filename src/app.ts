@@ -1,11 +1,17 @@
 import * as Phaser from 'phaser';
 
-type Square = Phaser.GameObjects.Rectangle & {
+const WIDTH = 800;
+const HEIGHT = 600;
+
+type GameObjectWithPhysics = Phaser.GameObjects.Shape & {
   body: Phaser.Physics.Arcade.Body;
 };
 
-export class GameScene extends Phaser.Scene {
-  private square: Square;
+export class PongScene extends Phaser.Scene {
+  player: GameObjectWithPhysics;
+  ball: GameObjectWithPhysics;
+
+  isStart = false;
 
   constructor() {
     super({
@@ -16,27 +22,46 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
-    this.square = this.add.rectangle(400, 400, 100, 100, 0xffffff) as Square;
-    this.physics.add.existing(this.square);
+    this.player = this.add.rectangle(
+      40,
+      300,
+      20,
+      100,
+      0xffffff
+    ) as GameObjectWithPhysics;
+    this.physics.add.existing(this.player);
+
+    this.ball = this.add.circle(60, 300, 10, 0xff0000) as GameObjectWithPhysics;
+    this.physics.add.existing(this.ball);
   }
 
   update() {
     const cursorKeys = this.input.keyboard.createCursorKeys();
+    const playerBody = this.player.body;
+    const ballBody = this.ball.body;
 
     if (cursorKeys.up.isDown) {
-      this.square.body.setVelocityY(-500);
+      playerBody.setVelocityY(-500);
     } else if (cursorKeys.down.isDown) {
-      this.square.body.setVelocityY(500);
+      playerBody.setVelocityY(500);
     } else {
-      this.square.body.setVelocityY(0);
+      playerBody.setVelocityY(0);
     }
 
-    if (cursorKeys.right.isDown) {
-      this.square.body.setVelocityX(500);
-    } else if (cursorKeys.left.isDown) {
-      this.square.body.setVelocityX(-500);
+    if (this.isStart) {
+      if (ballBody.x > WIDTH - ballBody.width || ballBody.x < 0) {
+        ballBody.setVelocityX(ballBody.velocity.x * -1);
+      }
+
+      if (ballBody.y > HEIGHT - ballBody.height || ballBody.y < 0) {
+        ballBody.setVelocityY(ballBody.velocity.y * -1);
+      }
+    } else if (cursorKeys.space.isDown) {
+      this.isStart = true;
+      ballBody.setVelocity(200, 200);
     } else {
-      this.square.body.setVelocityX(0);
+      ballBody.x = playerBody.x + playerBody.width;
+      ballBody.y = playerBody.y + (playerBody.height - ballBody.height) / 2;
     }
   }
 }
@@ -45,8 +70,8 @@ export const game = new Phaser.Game({
   title: 'Sample',
   type: Phaser.AUTO,
   scale: {
-    width: 800,
-    height: 600,
+    width: WIDTH,
+    height: HEIGHT,
   },
   physics: {
     default: 'arcade',
@@ -55,5 +80,5 @@ export const game = new Phaser.Game({
     },
   },
   backgroundColor: '#000000',
-  scene: GameScene,
+  scene: PongScene,
 });
