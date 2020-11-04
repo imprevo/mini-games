@@ -13,7 +13,7 @@ type GameObjectWithPhysics = Phaser.GameObjects.Shape & {
 export class ArcanoidScene extends Phaser.Scene {
   player: GameObjectWithPhysics;
   ball: GameObjectWithPhysics;
-  brick: GameObjectWithPhysics;
+  bricks: Phaser.GameObjects.Group;
 
   isStart = false;
 
@@ -45,15 +45,22 @@ export class ArcanoidScene extends Phaser.Scene {
     this.physics.add.existing(this.ball);
     this.ball.body.bounce.set(1);
 
-    this.brick = this.add.rectangle(
-      600,
-      100,
-      100,
-      20,
-      0xffffff
-    ) as GameObjectWithPhysics;
-    this.physics.add.existing(this.brick);
-    this.brick.body.immovable = true;
+    this.bricks = this.add.group();
+
+    for (let col = 0; col < 5; col++) {
+      for (let row = 0; row < 5; row++) {
+        const brick = this.add.rectangle(
+          100 + 150 * col,
+          100 + 50 * row,
+          100,
+          20,
+          0xffffff
+        ) as GameObjectWithPhysics;
+        this.physics.add.existing(brick);
+        brick.body.immovable = true;
+        this.bricks.add(brick);
+      }
+    }
   }
 
   update() {
@@ -80,7 +87,7 @@ export class ArcanoidScene extends Phaser.Scene {
         ballBody.setVelocityY(ballBody.velocity.y * -1);
       } else {
         this.physics.collide(this.ball, this.player);
-        this.physics.collide(this.ball, this.brick, (_ball, _brick) => {
+        this.physics.collide(this.ball, this.bricks, (_ball, _brick) => {
           _brick.destroy();
         });
       }
