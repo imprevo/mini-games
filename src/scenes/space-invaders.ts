@@ -26,6 +26,7 @@ export class SpaceInvadersScene extends Phaser.Scene {
   bulletTimer = 0;
 
   enemies: Phaser.GameObjects.Group;
+  enemiesTrigger: GameObjectWithPhysics;
 
   livesLabel: Phaser.GameObjects.Text;
   levelLabel: Phaser.GameObjects.Text;
@@ -51,7 +52,7 @@ export class SpaceInvadersScene extends Phaser.Scene {
     this.updateLevel(this.level);
 
     this.gameOverLabel = this.add
-      .text(WIDTH / 2, (HEIGHT / 3) * 2, 'YOU LOOSE', { fontSize: 30 })
+      .text(WIDTH / 2, HEIGHT / 2, 'YOU LOOSE', { fontSize: 30 })
       .setOrigin(0.5);
     this.gameOverLabel.setVisible(false);
 
@@ -86,9 +87,18 @@ export class SpaceInvadersScene extends Phaser.Scene {
 
     this.enemies = this.add.group();
     this.addEnemies();
+    this.enemiesTrigger = this.add.rectangle(
+      WIDTH / 2,
+      HEIGHT + 25,
+      WIDTH,
+      50,
+      0x00ff00
+    ) as GameObjectWithPhysics;
+    this.physics.add.existing(this.enemiesTrigger);
+    this.enemiesTrigger.body.immovable = true;
   }
 
-  update(time, delta) {
+  update(time: number, delta: number) {
     this.bulletTimer += delta;
 
     const playerBody = this.player.body;
@@ -105,52 +115,80 @@ export class SpaceInvadersScene extends Phaser.Scene {
 
     if (this.isGameOver) {
       if (this.playerKeys.enter.isDown) {
-        this.isGameOver = false;
-        this.gameOverLabel.setVisible(false);
-        this.updateLives(LIVES);
-        this.updateLevel(1);
-        this.addEnemies();
+        this.startGame();
       }
     } else {
       if (this.playerKeys.start.isDown && this.bulletTimer > 500) {
         this.bulletTimer = 0;
         this.shoot();
       }
-      // this.updateLives(this.lives - 1);
+
       if (this.lives <= 0) {
-        this.isGameOver = true;
-        this.gameOverLabel.setVisible(true);
+        this.gameOver();
       }
+
+      this.physics.collide(this.bullets, this.enemies, (bullet, enemy) => {
+        bullet.destroy();
+        enemy.destroy();
+
+        if (this.enemies.countActive() <= 0) {
+          this.addEnemies();
+          this.updateLevel(this.level + 1);
+        }
+      });
+
+      this.physics.collide(this.bullets, this.bulletsTrigger, (bullet) => {
+        bullet.destroy();
+      });
+
+      this.physics.collide(this.enemies, this.enemiesTrigger, () => {
+        this.gameOver();
+      });
+
+      this.physics.collide(this.enemies, this.player, (enemy) => {
+        this.updateLives(this.lives - 1);
+        enemy.destroy();
+      });
     }
+  }
 
-    this.physics.collide(this.bullets, this.enemies, (bullet, enemy) => {
-      bullet.destroy();
-      enemy.destroy();
+  startGame() {
+    this.isGameOver = false;
+    this.gameOverLabel.setVisible(false);
+    this.updateLives(LIVES);
+    this.updateLevel(1);
+    this.addEnemies();
+  }
 
-      if (this.enemies.countActive() <= 0) {
-        this.addEnemies();
-        this.updateLevel(this.level + 1);
-      }
-    });
-
-    this.physics.collide(this.bullets, this.bulletsTrigger, (bullet) => {
-      bullet.destroy();
-    });
+  gameOver() {
+    this.isGameOver = true;
+    this.gameOverLabel.setVisible(true);
   }
 
   addEnemies() {
     this.enemies.clear(true, true);
     for (let col = 0; col < 10; col++) {
       for (let row = 0; row < 4; row++) {
+        const x = 175 + 50 * col;
+        const y = 100 + 50 * row;
         const enemy = this.add.rectangle(
-          175 + 50 * col,
-          100 + 50 * row,
+          x,
+          y,
           20,
           20,
           0xff0000
         ) as GameObjectWithPhysics;
         this.physics.add.existing(enemy);
         enemy.body.immovable = true;
+        enemy.body.setVelocityY(5);
+        this.tweens.add({
+          targets: enemy,
+          x: { from: x - 150, to: x + 150 },
+          ease: 'Linear',
+          duration: 3000,
+          loop: -1,
+          yoyo: true,
+        });
         this.enemies.add(enemy);
       }
     }
