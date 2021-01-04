@@ -3,6 +3,9 @@ import { HEIGHT, WIDTH } from '../config';
 
 const PLAYER_SPEED = 300;
 const BULLET_SPEED = 500;
+const PLAYER_FIRE_RATE = 500;
+const ENEMY_BULLET_SPEED = 400;
+const ENEMY_FIRE_RATE = 1000;
 const LIVES = 3;
 
 const clamp = (val: number, min: number, max: number) =>
@@ -23,10 +26,12 @@ export class SpaceInvadersScene extends Phaser.Scene {
 
   bullets: Phaser.GameObjects.Group;
   bulletsTrigger: GameObjectWithPhysics;
-  bulletTimer = 0;
+  nextBulletTime = 0;
 
   enemies: Phaser.GameObjects.Group;
+  enemyBullets: Phaser.GameObjects.Group;
   enemiesTrigger: GameObjectWithPhysics;
+  nextEnemyBulletTime = 0;
 
   livesLabel: Phaser.GameObjects.Text;
   levelLabel: Phaser.GameObjects.Text;
@@ -96,11 +101,11 @@ export class SpaceInvadersScene extends Phaser.Scene {
     ) as GameObjectWithPhysics;
     this.physics.add.existing(this.enemiesTrigger);
     this.enemiesTrigger.body.immovable = true;
+
+    this.enemyBullets = this.add.group();
   }
 
-  update(time: number, delta: number) {
-    this.bulletTimer += delta;
-
+  update(time: number) {
     const playerBody = this.player.body;
 
     if (this.playerKeys.left.isDown) {
@@ -118,9 +123,16 @@ export class SpaceInvadersScene extends Phaser.Scene {
         this.startGame();
       }
     } else {
-      if (this.playerKeys.start.isDown && this.bulletTimer > 500) {
-        this.bulletTimer = 0;
-        this.shoot();
+      if (this.playerKeys.start.isDown && this.nextBulletTime < time) {
+        this.playerFire();
+        this.nextBulletTime = time + PLAYER_FIRE_RATE;
+      }
+
+      if (this.nextEnemyBulletTime < time) {
+        if (this.nextEnemyBulletTime) {
+          this.enemyFire();
+        }
+        this.nextEnemyBulletTime = time + ENEMY_FIRE_RATE;
       }
 
       if (this.lives <= 0) {
@@ -149,6 +161,24 @@ export class SpaceInvadersScene extends Phaser.Scene {
         this.updateLives(this.lives - 1);
         enemy.destroy();
       });
+
+      this.physics.collide(this.enemyBullets, this.player, (enemy) => {
+        this.updateLives(this.lives - 1);
+        enemy.destroy();
+      });
+
+      this.physics.collide(this.enemyBullets, this.enemiesTrigger, (bullet) => {
+        bullet.destroy();
+      });
+
+      this.physics.collide(
+        this.enemyBullets,
+        this.bullets,
+        (bullet1, bullet2) => {
+          bullet1.destroy();
+          bullet2.destroy();
+        }
+      );
     }
   }
 
@@ -194,7 +224,7 @@ export class SpaceInvadersScene extends Phaser.Scene {
     }
   }
 
-  shoot() {
+  playerFire() {
     const bullet = this.add.rectangle(
       -100,
       -100,
@@ -209,6 +239,29 @@ export class SpaceInvadersScene extends Phaser.Scene {
     bulletBody.y = playerBody.y - playerBody.height;
     bulletBody.setVelocity(0, -BULLET_SPEED);
     this.bullets.add(bullet);
+  }
+
+  enemyFire() {
+    const bullet = this.add.rectangle(
+      -100,
+      -100,
+      4,
+      20,
+      0x0000ff
+    ) as GameObjectWithPhysics;
+    this.physics.add.existing(bullet);
+    const enemies = this.enemies.getChildren();
+    const rnd = Phaser.Math.RND.between(0, enemies.length);
+    const enemy = enemies[rnd] as GameObjectWithPhysics;
+
+    if (enemy) {
+      const enemyBody = enemy.body;
+      const bulletBody = bullet.body;
+      bulletBody.x = enemyBody.x + (enemyBody.width - bulletBody.width) / 2;
+      bulletBody.y = enemyBody.y + enemyBody.height;
+      bulletBody.setVelocity(0, ENEMY_BULLET_SPEED);
+      this.enemyBullets.add(bullet);
+    }
   }
 
   updateLives(lives: number) {
