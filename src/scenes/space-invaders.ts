@@ -15,16 +15,12 @@ type GameObjectWithPhysics = Phaser.GameObjects.Shape & {
   body: Phaser.Physics.Arcade.Body;
 };
 
-type PlayerKeys = Record<
-  'left' | 'right' | 'start' | 'enter',
-  Phaser.Input.Keyboard.Key
->;
-
 class Bullet extends Phaser.GameObjects.Rectangle {
   body: Phaser.Physics.Arcade.Body;
 
   constructor(scene: Phaser.Scene, fillColor: number) {
     super(scene, -100, -100, 4, 20, fillColor);
+    scene.add.existing(this);
     scene.physics.add.existing(this);
   }
 
@@ -35,13 +31,55 @@ class Bullet extends Phaser.GameObjects.Rectangle {
   }
 }
 
+class Player extends Phaser.GameObjects.Rectangle {
+  body: Phaser.Physics.Arcade.Body;
+  keyboardKeys: Record<'left' | 'right' | 'start', Phaser.Input.Keyboard.Key>;
+  nextBulletTime = 0;
+  bullets: Phaser.GameObjects.Group;
+
+  constructor(scene: Phaser.Scene, bullets: Phaser.GameObjects.Group) {
+    super(scene, WIDTH / 2, HEIGHT - 20, 50, 20, 0xffffff);
+    this.bullets = bullets;
+    scene.add.existing(this);
+    scene.physics.add.existing(this);
+    this.body.immovable = true;
+    this.keyboardKeys = {
+      left: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
+      right: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
+      start: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE),
+    };
+  }
+
+  update(time: number) {
+    if (this.keyboardKeys.left.isDown) {
+      this.body.setVelocityX(-PLAYER_SPEED);
+    } else if (this.keyboardKeys.right.isDown) {
+      this.body.setVelocityX(PLAYER_SPEED);
+    } else {
+      this.body.setVelocityX(0);
+    }
+
+    this.body.x = clamp(this.body.x, 0, WIDTH - this.body.width);
+
+    if (this.keyboardKeys.start.isDown && this.nextBulletTime < time) {
+      this.nextBulletTime = time + PLAYER_FIRE_RATE;
+      this.fire();
+    }
+  }
+
+  fire() {
+    const bullet = new Bullet(this.scene, 0x0000ff);
+    bullet.fire(this.body, -BULLET_SPEED);
+    this.bullets.add(bullet);
+  }
+}
+
 export class SpaceInvadersScene extends Phaser.Scene {
-  player: GameObjectWithPhysics;
-  playerKeys: PlayerKeys;
+  player: Player;
+  keyboardKeys: Record<'enter', Phaser.Input.Keyboard.Key>;
 
   bullets: Phaser.GameObjects.Group;
   bulletsTrigger: GameObjectWithPhysics;
-  nextBulletTime = 0;
 
   enemies: Phaser.GameObjects.Group;
   enemyBullets: Phaser.GameObjects.Group;
@@ -77,24 +115,12 @@ export class SpaceInvadersScene extends Phaser.Scene {
       .setDepth(1);
     this.gameOverLabel.setVisible(false);
 
-    this.player = this.add.rectangle(
-      WIDTH / 2,
-      HEIGHT - 20,
-      50,
-      20,
-      0xffffff
-    ) as GameObjectWithPhysics;
-    this.physics.add.existing(this.player);
-    this.player.body.immovable = true;
+    this.bullets = this.add.group();
+    this.player = new Player(this, this.bullets);
 
-    this.playerKeys = {
-      left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
-      right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
-      start: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE),
+    this.keyboardKeys = {
       enter: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER),
     };
-
-    this.bullets = this.add.group();
 
     this.bulletsTrigger = this.add.rectangle(
       WIDTH / 2,
@@ -122,27 +148,12 @@ export class SpaceInvadersScene extends Phaser.Scene {
   }
 
   update(time: number) {
-    const playerBody = this.player.body;
-
-    if (this.playerKeys.left.isDown) {
-      playerBody.setVelocityX(-PLAYER_SPEED);
-    } else if (this.playerKeys.right.isDown) {
-      playerBody.setVelocityX(PLAYER_SPEED);
-    } else {
-      playerBody.setVelocityX(0);
-    }
-
-    playerBody.x = clamp(playerBody.x, 0, WIDTH - playerBody.width);
-
     if (this.isGameOver) {
-      if (this.playerKeys.enter.isDown) {
+      if (this.keyboardKeys.enter.isDown) {
         this.startGame();
       }
     } else {
-      if (this.playerKeys.start.isDown && this.nextBulletTime < time) {
-        this.playerFire();
-        this.nextBulletTime = time + PLAYER_FIRE_RATE;
-      }
+      this.player.update(time);
 
       if (this.nextEnemyBulletTime < time) {
         if (this.nextEnemyBulletTime) {
@@ -238,12 +249,6 @@ export class SpaceInvadersScene extends Phaser.Scene {
         this.enemies.add(enemy);
       }
     }
-  }
-
-  playerFire() {
-    const bullet = new Bullet(this, 0x0000ff);
-    bullet.fire(this.player.body, -BULLET_SPEED);
-    this.bullets.add(bullet);
   }
 
   enemyFire() {
