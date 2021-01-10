@@ -20,6 +20,21 @@ type PlayerKeys = Record<
   Phaser.Input.Keyboard.Key
 >;
 
+class Bullet extends Phaser.GameObjects.Rectangle {
+  body: Phaser.Physics.Arcade.Body;
+
+  constructor(scene: Phaser.Scene, fillColor: number) {
+    super(scene, -100, -100, 4, 20, fillColor);
+    scene.physics.add.existing(this);
+  }
+
+  fire(body: Phaser.Physics.Arcade.Body, velocityY: number) {
+    this.body.x = body.x + (body.width - this.width) / 2;
+    this.body.y = velocityY < 0 ? body.y - body.height : body.y + body.height;
+    this.body.setVelocityY(velocityY);
+  }
+}
+
 export class SpaceInvadersScene extends Phaser.Scene {
   player: GameObjectWithPhysics;
   playerKeys: PlayerKeys;
@@ -225,41 +240,19 @@ export class SpaceInvadersScene extends Phaser.Scene {
   }
 
   playerFire() {
-    const bullet = this.add.rectangle(
-      -100,
-      -100,
-      4,
-      20,
-      0x0000ff
-    ) as GameObjectWithPhysics;
-    this.physics.add.existing(bullet);
-    const playerBody = this.player.body;
-    const bulletBody = bullet.body;
-    bulletBody.x = playerBody.x + (playerBody.width - bulletBody.width) / 2;
-    bulletBody.y = playerBody.y - playerBody.height;
-    bulletBody.setVelocity(0, -BULLET_SPEED);
+    const bullet = new Bullet(this, 0x0000ff);
+    bullet.fire(this.player.body, -BULLET_SPEED);
     this.bullets.add(bullet);
   }
 
   enemyFire() {
-    const bullet = this.add.rectangle(
-      -100,
-      -100,
-      4,
-      20,
-      0x0000ff
-    ) as GameObjectWithPhysics;
-    this.physics.add.existing(bullet);
     const enemies = this.enemies.getChildren();
     const rnd = Phaser.Math.RND.between(0, enemies.length);
     const enemy = enemies[rnd] as GameObjectWithPhysics;
 
     if (enemy) {
-      const enemyBody = enemy.body;
-      const bulletBody = bullet.body;
-      bulletBody.x = enemyBody.x + (enemyBody.width - bulletBody.width) / 2;
-      bulletBody.y = enemyBody.y + enemyBody.height;
-      bulletBody.setVelocity(0, ENEMY_BULLET_SPEED);
+      const bullet = new Bullet(this, 0xff00ff);
+      bullet.fire(enemy.body, ENEMY_BULLET_SPEED);
       this.enemyBullets.add(bullet);
     }
   }
