@@ -73,7 +73,8 @@ export class SpaceInvadersScene extends Phaser.Scene {
 
     this.gameOverLabel = this.add
       .text(WIDTH / 2, HEIGHT / 2, 'YOU LOOSE', { fontSize: 30 })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setDepth(1);
     this.gameOverLabel.setVisible(false);
 
     this.player = this.add.rectangle(
