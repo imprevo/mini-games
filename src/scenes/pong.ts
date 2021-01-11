@@ -31,11 +31,7 @@ export class PongScene extends Phaser.Scene {
   side = 1;
 
   constructor() {
-    super({
-      active: false,
-      visible: false,
-      key: 'PongGame',
-    });
+    super('PongScene');
   }
 
   create() {
@@ -86,6 +82,10 @@ export class PongScene extends Phaser.Scene {
       0xff0000
     ) as GameObjectWithPhysics;
     this.physics.add.existing(this.ball);
+
+    this.input.keyboard.on('keydown_ESC', () => {
+      this.scene.start('MainScene');
+    });
   }
 
   update() {

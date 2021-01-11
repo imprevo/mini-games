@@ -32,11 +32,7 @@ export class ArcanoidScene extends Phaser.Scene {
   level = 1;
 
   constructor() {
-    super({
-      active: false,
-      visible: false,
-      key: 'ArcanoidGame',
-    });
+    super('ArcanoidScene');
   }
 
   create() {
@@ -80,6 +76,10 @@ export class ArcanoidScene extends Phaser.Scene {
 
     this.bricks = this.add.group();
     this.addBricks();
+
+    this.input.keyboard.on('keydown_ESC', () => {
+      this.scene.start('MainScene');
+    });
   }
 
   update() {

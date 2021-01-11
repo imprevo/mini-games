@@ -1,7 +1,8 @@
 import * as Phaser from 'phaser';
 import { HEIGHT, WIDTH } from './config';
-// import { ArcanoidScene } from './scenes/arcanoid';
-// import { PongScene } from './scenes/pong';
+import { ArcanoidScene } from './scenes/arcanoid';
+import { MainScene } from './scenes/main';
+import { PongScene } from './scenes/pong';
 import { SpaceInvadersScene } from './scenes/space-invaders';
 
 export const game = new Phaser.Game({
@@ -18,5 +19,5 @@ export const game = new Phaser.Game({
     },
   },
   backgroundColor: '#000000',
-  scene: SpaceInvadersScene,
+  scene: [MainScene, PongScene, ArcanoidScene, SpaceInvadersScene],
 });

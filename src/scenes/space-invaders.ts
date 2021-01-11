@@ -180,11 +180,7 @@ export class SpaceInvadersScene extends Phaser.Scene {
   level = 1;
 
   constructor() {
-    super({
-      active: false,
-      visible: false,
-      key: 'ArcanoidGame',
-    });
+    super('SpaceInvadersScene');
   }
 
   create() {
@@ -214,6 +210,10 @@ export class SpaceInvadersScene extends Phaser.Scene {
 
     this.enemies = new EnemyGroup(this, this.enemyBullets);
     this.enemies.addEnemies();
+
+    this.input.keyboard.on('keydown_ESC', () => {
+      this.scene.start('MainScene');
+    });
   }
 
   update(time: number) {
