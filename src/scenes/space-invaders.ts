@@ -11,10 +11,6 @@ const LIVES = 3;
 const clamp = (val: number, min: number, max: number) =>
   Math.max(min, Math.min(max, val));
 
-type GameObjectWithPhysics = Phaser.GameObjects.Shape & {
-  body: Phaser.Physics.Arcade.Body;
-};
-
 class Bullet extends Phaser.GameObjects.Rectangle {
   body: Phaser.Physics.Arcade.Body;
 
@@ -89,7 +85,6 @@ class Enemy extends Phaser.GameObjects.Rectangle {
     scene.add.existing(this);
     scene.physics.add.existing(this);
     this.body.immovable = true;
-    this.move(x);
   }
 
   move(x) {
@@ -111,17 +106,70 @@ class Enemy extends Phaser.GameObjects.Rectangle {
   }
 }
 
+class EnemyGroup extends Phaser.GameObjects.Group {
+  bullets: Phaser.GameObjects.Group;
+  nextBulletTime = 0;
+
+  constructor(scene: Phaser.Scene, bullets: Phaser.GameObjects.Group) {
+    super(scene);
+    this.bullets = bullets;
+    scene.add.existing(this);
+  }
+
+  update(time: number) {
+    if (this.nextBulletTime < time) {
+      if (this.nextBulletTime) {
+        this.enemyFire();
+      }
+      this.nextBulletTime = time + ENEMY_FIRE_RATE;
+    }
+  }
+
+  addEnemies() {
+    this.clear(true, true);
+    for (let col = 0; col < 10; col++) {
+      for (let row = 0; row < 4; row++) {
+        const x = 175 + 50 * col;
+        const y = 100 + 50 * row;
+        const enemy = new Enemy(this.scene, x, y, this.bullets);
+        enemy.move(x);
+        this.add(enemy);
+      }
+    }
+  }
+
+  enemyFire() {
+    const enemies = this.getChildren() as Enemy[];
+    const rnd = Phaser.Math.RND.between(0, enemies.length);
+    const enemy = enemies[rnd];
+
+    if (enemy) {
+      enemy.fire();
+    }
+  }
+}
+
+class Trigger extends Phaser.GameObjects.Rectangle {
+  body: Phaser.Physics.Arcade.Body;
+
+  constructor(scene: Phaser.Scene, x: number, y: number) {
+    super(scene, x, y, WIDTH, 50, 0x00ff00);
+    scene.add.existing(this);
+    scene.physics.add.existing(this);
+    this.body.immovable = true;
+  }
+}
+
 export class SpaceInvadersScene extends Phaser.Scene {
   player: Player;
   keyboardKeys: Record<'enter', Phaser.Input.Keyboard.Key>;
 
   playerBullets: Phaser.GameObjects.Group;
-  bulletsTrigger: GameObjectWithPhysics;
+  bulletsTrigger: Trigger;
 
-  enemies: Phaser.GameObjects.Group;
+  enemies: EnemyGroup;
   enemyBullets: Phaser.GameObjects.Group;
-  enemiesTrigger: GameObjectWithPhysics;
-  nextEnemyBulletTime = 0;
+  enemiesTrigger: Trigger;
 
   livesLabel: Phaser.GameObjects.Text;
   levelLabel: Phaser.GameObjects.Text;
@@ -161,27 +209,11 @@ export class SpaceInvadersScene extends Phaser.Scene {
       enter: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER),
     };
 
-    this.bulletsTrigger = this.add.rectangle(
-      WIDTH / 2,
-      -100,
-      WIDTH,
-      50,
-      0x00ff00
-    ) as GameObjectWithPhysics;
-    this.physics.add.existing(this.bulletsTrigger);
-    this.bulletsTrigger.body.immovable = true;
+    this.bulletsTrigger = new Trigger(this, WIDTH / 2, -100);
+    this.enemiesTrigger = new Trigger(this, WIDTH / 2, HEIGHT + 25);
 
-    this.enemies = this.add.group();
-    this.addEnemies();
-    this.enemiesTrigger = this.add.rectangle(
-      WIDTH / 2,
-      HEIGHT + 25,
-      WIDTH,
-      50,
-      0x00ff00
-    ) as GameObjectWithPhysics;
-    this.physics.add.existing(this.enemiesTrigger);
-    this.enemiesTrigger.body.immovable = true;
+    this.enemies = new EnemyGroup(this, this.enemyBullets);
+    this.enemies.addEnemies();
   }
 
   update(time: number) {
@@ -191,13 +223,7 @@ export class SpaceInvadersScene extends Phaser.Scene {
       }
     } else {
       this.player.update(time);
-
-      if (this.nextEnemyBulletTime < time) {
-        if (this.nextEnemyBulletTime) {
-          this.enemyFire();
-        }
-        this.nextEnemyBulletTime = time + ENEMY_FIRE_RATE;
-      }
+      this.enemies.update(time);
 
       if (this.lives <= 0) {
         this.gameOver();
@@ -211,7 +237,7 @@ export class SpaceInvadersScene extends Phaser.Scene {
           enemy.destroy();
 
           if (this.enemies.countActive() <= 0) {
-            this.addEnemies();
+            this.enemies.addEnemies();
             this.updateLevel(this.level + 1);
           }
         }
@@ -259,34 +285,12 @@ export class SpaceInvadersScene extends Phaser.Scene {
     this.gameOverLabel.setVisible(false);
     this.updateLives(LIVES);
     this.updateLevel(1);
-    this.addEnemies();
+    this.enemies.addEnemies();
   }
 
   gameOver() {
     this.isGameOver = true;
     this.gameOverLabel.setVisible(true);
-  }
-
-  addEnemies() {
-    this.enemies.clear(true, true);
-    for (let col = 0; col < 10; col++) {
-      for (let row = 0; row < 4; row++) {
-        const x = 175 + 50 * col;
-        const y = 100 + 50 * row;
-        const enemy = new Enemy(this, x, y, this.enemyBullets);
-        this.enemies.add(enemy);
-      }
-    }
-  }
-
-  enemyFire() {
-    const enemies = this.enemies.getChildren() as Enemy[];
-    const rnd = Phaser.Math.RND.between(0, enemies.length);
-    const enemy = enemies[rnd];
-
-    if (enemy) {
-      enemy.fire();
-    }
   }
 
   updateLives(lives: number) {
