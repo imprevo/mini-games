@@ -130,8 +130,11 @@ export class PongScene extends Phaser.Scene {
         if (this.physics.overlap(this.ball, this.player2)) {
           ballBody.setVelocityX(-increaseBallSpeed(ballBody.velocity.x));
         }
-        if (ballBody.y > HEIGHT - ballBody.height || ballBody.y < 0) {
-          ballBody.setVelocityY(ballBody.velocity.y * -1);
+        if (ballBody.y > HEIGHT - ballBody.height) {
+          ballBody.setVelocityY(-Math.abs(ballBody.velocity.y));
+        }
+        if (ballBody.y < 0) {
+          ballBody.setVelocityY(Math.abs(ballBody.velocity.y));
         }
       }
     } else if (this.side == 1 && this.player1Keys.start.isDown) {

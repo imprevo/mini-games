@@ -113,10 +113,12 @@ export class ArcanoidScene extends Phaser.Scene {
           this.isGameOver = true;
           this.gameOverLabel.setVisible(true);
         }
-      } else if (ballBody.x > WIDTH - ballBody.width || ballBody.x < 0) {
-        ballBody.setVelocityX(ballBody.velocity.x * -1);
+      } else if (ballBody.x > WIDTH - ballBody.width) {
+        ballBody.setVelocityX(-Math.abs(ballBody.velocity.x));
+      } else if (ballBody.x < 0) {
+        ballBody.setVelocityX(Math.abs(ballBody.velocity.x));
       } else if (ballBody.y < 0) {
-        ballBody.setVelocityY(ballBody.velocity.y * -1);
+        ballBody.setVelocityY(Math.abs(ballBody.velocity.y));
       } else {
         this.physics.collide(this.ball, this.player);
         this.physics.collide(this.ball, this.bricks, (_ball, _brick) => {
