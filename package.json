@@ -1,13 +1,30 @@
 {
   "name": "mini-games",
   "version": "1.0.0",
-  "scripts": {
-    "dev": "NODE_ENV=development rollup -c -w",
-    "build": "NODE_ENV=production rollup -c"
+  "description": "HTML5 mini games built with Phaser 3 and Typescript",
+  "keywords": [
+    "game",
+    "html5",
+    "webgl",
+    "phaser",
+    "typescript"
+  ],
+  "homepage": "https://github.com/imprevo/mini-games",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:imprevo/mini-games.git"
   },
   "author": "Evgeniy Mokeev",
   "license": "ISC",
   "private": true,
+  "engines": {
+    "npm": ">=6.0.0",
+    "node": ">=14.0.0"
+  },
+  "scripts": {
+    "dev": "NODE_ENV=development rollup -c -w",
+    "build": "NODE_ENV=production rollup -c"
+  },
   "dependencies": {},
   "devDependencies": {
     "@rollup/plugin-commonjs": "^16.0.0",
