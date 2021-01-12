@@ -15,7 +15,7 @@ export const game = new Phaser.Game({
   physics: {
     default: 'arcade',
     arcade: {
-      debug: true,
+      debug: process.env.NODE_ENV !== 'production',
     },
   },
   backgroundColor: '#000000',
