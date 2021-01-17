@@ -120,6 +120,10 @@ class EnemyGroup extends Phaser.GameObjects.Group {
     scene.add.existing(this);
   }
 
+  create() {
+    this.nextBulletTime = 0;
+  }
+
   update(time: number) {
     if (this.nextBulletTime < time) {
       if (this.nextBulletTime) {
@@ -293,6 +297,8 @@ export class SpaceInvadersScene extends Phaser.Scene {
     this.updateLives(LIVES);
     this.updateLevel(1);
     this.enemies.addEnemies();
+    this.enemyBullets.clear(true, true);
+    this.playerBullets.clear(true, true);
   }
 
   gameOver() {
