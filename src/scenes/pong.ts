@@ -35,6 +35,11 @@ export class PongScene extends Phaser.Scene {
   }
 
   create() {
+    this.player1Score = 0;
+    this.player2Score = 0;
+    this.isStart = false;
+    this.side = 1;
+
     this.add.line(WIDTH / 2, 0, 0, 0, 0, HEIGHT, 0xffffff).setOrigin(0, 0);
     this.player1ScoreLabel = this.add
       .text(WIDTH / 4, HEIGHT / 2, this.player1Score.toString(), {

@@ -184,11 +184,13 @@ export class SpaceInvadersScene extends Phaser.Scene {
   }
 
   create() {
+    this.isGameOver = false;
+
     this.livesLabel = this.add.text(20, 20, '');
     this.updateLives(LIVES);
 
     this.levelLabel = this.add.text(20, 40, '');
-    this.updateLevel(this.level);
+    this.updateLevel(1);
 
     this.gameOverLabel = this.add
       .text(WIDTH / 2, HEIGHT / 2, 'YOU LOOSE', { fontSize: 30 })
