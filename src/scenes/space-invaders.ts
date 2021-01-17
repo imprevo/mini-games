@@ -52,7 +52,7 @@ class Player extends Phaser.GameObjects.Rectangle {
     } else if (this.keyboardKeys.right.isDown) {
       this.body.setVelocityX(PLAYER_SPEED);
     } else {
-      this.body.setVelocityX(0);
+      this.stop();
     }
 
     this.body.x = clamp(this.body.x, 0, WIDTH - this.body.width);
@@ -67,6 +67,10 @@ class Player extends Phaser.GameObjects.Rectangle {
     const bullet = new Bullet(this.scene, 0x0000ff);
     bullet.fire(this.body, -BULLET_SPEED);
     this.bullets.add(bullet);
+  }
+
+  stop() {
+    this.body.setVelocityX(0);
   }
 }
 
@@ -223,6 +227,7 @@ export class SpaceInvadersScene extends Phaser.Scene {
       if (this.keyboardKeys.enter.isDown) {
         this.startGame();
       }
+      this.player.stop();
     } else {
       this.player.update(time);
       this.enemies.update(time);
