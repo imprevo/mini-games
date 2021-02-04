@@ -1,10 +1,14 @@
 import * as Phaser from 'phaser';
 import { HEIGHT, WIDTH, STEP, Direction } from './config';
 
-const MOVE_DELAY = 250;
+const MOVE_BASE = 220;
+const MOVE_STEP = 10;
+const LEVEL_MAX = 20;
 
 export class Snake extends Phaser.GameObjects.Group {
-  nextMovementTime = 0;
+  speed: number;
+  moveDelay: number;
+  nextMovementTime: number;
   headDirection = Direction.RIGHT;
   nextHeadDirection = Direction.RIGHT;
 
@@ -17,13 +21,15 @@ export class Snake extends Phaser.GameObjects.Group {
     scene.add.existing(this);
 
     this.createBody(x + STEP / 2, y + STEP / 2);
+    this.nextMovementTime = 0;
+    this.speed = 1;
   }
 
   update(time: number) {
     this.updateDirection();
 
     if (time > this.nextMovementTime) {
-      this.nextMovementTime = time + MOVE_DELAY;
+      this.nextMovementTime = time + this.getUpdateDelta();
       this.move();
     }
   }
@@ -91,5 +97,15 @@ export class Snake extends Phaser.GameObjects.Group {
     this.headDirection = this.nextHeadDirection;
 
     this.shiftPosition(this.headPosition.x, this.headPosition.y, 1);
+  }
+
+  speedUp() {
+    if (this.speed < LEVEL_MAX) {
+      this.speed += 1;
+    }
+  }
+
+  getUpdateDelta() {
+    return MOVE_BASE - this.speed * MOVE_STEP;
   }
 }

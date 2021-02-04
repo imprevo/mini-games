@@ -22,6 +22,7 @@ export class SnakeScene extends Phaser.Scene {
 
     this.physics.collide(this.fruits, this.snake, (fruit) => {
       fruit.destroy();
+      this.snake.speedUp();
       this.fruits.addFruit();
     });
   }
