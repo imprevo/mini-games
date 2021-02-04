@@ -7,6 +7,9 @@ export class SnakeScene extends Phaser.Scene {
   snake: Snake;
   fruits: FruitGroup;
 
+  score: number;
+  scoreLabel: Phaser.GameObjects.Text;
+
   constructor() {
     super('SnakeScene');
   }
@@ -15,6 +18,8 @@ export class SnakeScene extends Phaser.Scene {
     this.snake = new Snake(this, STEP * 5, STEP * 5);
     this.fruits = new FruitGroup(this);
     this.fruits.addFruit();
+    this.scoreLabel = this.add.text(20, 20, '').setDepth(1);
+    this.updateScore(0);
 
     this.input.keyboard.on('keydown_ESC', () => {
       this.scene.start('MainScene');
@@ -28,6 +33,12 @@ export class SnakeScene extends Phaser.Scene {
       fruit.destroy();
       this.snake.eat();
       this.fruits.addFruit();
+      this.updateScore(this.score + 1);
     });
+  }
+
+  updateScore(score: number) {
+    this.score = score;
+    this.scoreLabel.text = `Score: ${this.score}`;
   }
 }
