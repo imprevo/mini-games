@@ -1,17 +1,9 @@
 import * as Phaser from 'phaser';
-import { HEIGHT, WIDTH } from '../../config';
+import { HEIGHT, WIDTH, STEP, Direction } from './config';
 
-const MOVE_DELAY = 500;
-const STEP = 50;
+const MOVE_DELAY = 250;
 
-enum Direction {
-  LEFT,
-  RIGHT,
-  UP,
-  DOWN,
-}
-
-class Snake extends Phaser.GameObjects.Group {
+export class Snake extends Phaser.GameObjects.Group {
   nextMovementTime = 0;
   headDirection = Direction.RIGHT;
   nextHeadDirection = Direction.RIGHT;
@@ -19,11 +11,12 @@ class Snake extends Phaser.GameObjects.Group {
   head: Phaser.GameObjects.GameObject;
   headPosition: Phaser.Geom.Point;
 
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene);
 
     scene.add.existing(this);
-    this.createBody();
+
+    this.createBody(x + STEP / 2, y + STEP / 2);
   }
 
   update(time: number) {
@@ -35,9 +28,7 @@ class Snake extends Phaser.GameObjects.Group {
     }
   }
 
-  createBody() {
-    const x = STEP * 5.5;
-    const y = STEP * 5.5;
+  createBody(x: number, y: number) {
     this.headPosition = new Phaser.Geom.Point(x, y);
 
     for (let index = 0; index < 5; index++) {
@@ -50,6 +41,7 @@ class Snake extends Phaser.GameObjects.Group {
         0x0000ff
       );
       this.add(cell, true);
+      this.scene.physics.add.existing(cell);
     }
   }
 
@@ -99,21 +91,5 @@ class Snake extends Phaser.GameObjects.Group {
     this.headDirection = this.nextHeadDirection;
 
     this.shiftPosition(this.headPosition.x, this.headPosition.y, 1);
-  }
-}
-
-export class SnakeScene extends Phaser.Scene {
-  snake: Snake;
-
-  constructor() {
-    super('SnakeScene');
-  }
-
-  create() {
-    this.snake = new Snake(this);
-  }
-
-  update(time: number) {
-    this.snake.update(time);
   }
 }
