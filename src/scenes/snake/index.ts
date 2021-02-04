@@ -15,6 +15,10 @@ export class SnakeScene extends Phaser.Scene {
     this.snake = new Snake(this, STEP * 5, STEP * 5);
     this.fruits = new FruitGroup(this);
     this.fruits.addFruit();
+
+    this.input.keyboard.on('keydown_ESC', () => {
+      this.scene.start('MainScene');
+    });
   }
 
   update(time: number) {

@@ -54,6 +54,9 @@ export class MainScene extends Phaser.Scene {
       new MenuItem(this, WIDTH / 2, 400, 'SPACE INVADERS', () => {
         this.scene.start('SpaceInvadersScene');
       }),
+      new MenuItem(this, WIDTH / 2, 450, 'SNAKE', () => {
+        this.scene.start('SnakeScene');
+      }),
     ];
 
     this.input.keyboard.on('keydown_UP', () => {
