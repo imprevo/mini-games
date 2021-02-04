@@ -5,6 +5,12 @@ const MOVE_BASE = 220;
 const MOVE_STEP = 10;
 const LEVEL_MAX = 20;
 
+class SnakeCell extends Phaser.GameObjects.Rectangle {
+  constructor(scene: Phaser.Scene, x: number, y: number) {
+    super(scene, x, y, STEP, STEP, 0x0000ff);
+  }
+}
+
 export class Snake extends Phaser.GameObjects.Group {
   speed: number;
   moveDelay: number;
@@ -14,6 +20,7 @@ export class Snake extends Phaser.GameObjects.Group {
 
   head: Phaser.GameObjects.GameObject;
   headPosition: Phaser.Geom.Point;
+  tailPosition: Phaser.Geom.Point;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene);
@@ -35,20 +42,24 @@ export class Snake extends Phaser.GameObjects.Group {
   }
 
   createBody(x: number, y: number) {
-    this.headPosition = new Phaser.Geom.Point(x, y);
-
-    for (let index = 0; index < 5; index++) {
-      const cell = new Phaser.GameObjects.Rectangle(
-        this.scene,
-        x - STEP * index,
-        y,
-        STEP,
-        STEP,
-        0x0000ff
-      );
-      this.add(cell, true);
-      this.scene.physics.add.existing(cell);
+    const count = 5;
+    for (let index = 0; index < count; index++) {
+      this.addCell(x - STEP * index, y);
     }
+
+    this.headPosition = new Phaser.Geom.Point(x, y);
+    this.tailPosition = new Phaser.Geom.Point(x - STEP * count, y);
+  }
+
+  addCell(x: number, y: number) {
+    const cell = new SnakeCell(this.scene, x, y);
+    this.add(cell, true);
+    this.scene.physics.add.existing(cell);
+  }
+
+  eat() {
+    this.addCell(this.tailPosition.x, this.tailPosition.y);
+    this.speedUp();
   }
 
   updateDirection() {
@@ -76,6 +87,12 @@ export class Snake extends Phaser.GameObjects.Group {
   }
 
   move() {
+    this.moveHead();
+    this.shiftPosition(this.headPosition.x, this.headPosition.y, 1);
+    this.moveTail();
+  }
+
+  moveHead() {
     switch (this.nextHeadDirection) {
       case Direction.LEFT:
         this.headPosition.x = this.headPosition.x - STEP;
@@ -95,8 +112,14 @@ export class Snake extends Phaser.GameObjects.Group {
     this.headPosition.y = Phaser.Math.Wrap(this.headPosition.y, 0, HEIGHT);
 
     this.headDirection = this.nextHeadDirection;
+  }
 
-    this.shiftPosition(this.headPosition.x, this.headPosition.y, 1);
+  moveTail() {
+    const children = this.getChildren();
+    const last = children[children.length - 1] as SnakeCell;
+
+    this.tailPosition.x = last.x;
+    this.tailPosition.y = last.y;
   }
 
   speedUp() {
