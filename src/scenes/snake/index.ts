@@ -9,6 +9,9 @@ export class SnakeScene extends Phaser.Scene {
   isGameOver = false;
   gameOverLabel: Phaser.GameObjects.Text;
 
+  score: number;
+  scoreLabel: Phaser.GameObjects.Text;
+
   constructor() {
     super('SnakeScene');
   }
@@ -27,6 +30,13 @@ export class SnakeScene extends Phaser.Scene {
         .setOrigin(0.5);
     }
     this.gameOverLabel.setVisible(false);
+
+    this.scoreLabel = this.add.text(20, 20, '').setDepth(1);
+    this.updateScore(0);
+
+    this.input.keyboard.on('keydown_ESC', () => {
+      this.scene.start('MainScene');
+    });
   }
 
   update(time: number) {
@@ -42,6 +52,7 @@ export class SnakeScene extends Phaser.Scene {
         fruit.destroy();
         this.snake.eat();
         this.fruits.addFruit();
+        this.updateScore(this.score + 1);
       });
 
       this.physics.collide(this.snake, this.snake, () => {
@@ -53,5 +64,10 @@ export class SnakeScene extends Phaser.Scene {
   gameOver() {
     this.isGameOver = true;
     this.gameOverLabel.setVisible(true);
+  }
+
+  updateScore(score: number) {
+    this.score = score;
+    this.scoreLabel.text = `Score: ${this.score}`;
   }
 }
