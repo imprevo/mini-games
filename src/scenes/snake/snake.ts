@@ -88,8 +88,8 @@ export class Snake extends Phaser.GameObjects.Group {
 
   move() {
     this.moveHead();
-    this.shiftPosition(this.headPosition.x, this.headPosition.y, 1);
     this.moveTail();
+    this.shiftPosition(this.headPosition.x, this.headPosition.y, 1);
   }
 
   moveHead() {
