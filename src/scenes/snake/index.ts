@@ -24,13 +24,14 @@ export class SnakeScene extends Phaser.Scene {
     this.fruits.addFruit();
 
     this.isGameOver = false;
-    if (!this.gameOverLabel) {
-      this.gameOverLabel = this.add
-        .text(WIDTH / 2, HEIGHT / 2, 'YOU LOOSE', { fontSize: 30 })
-        .setOrigin(0.5);
-    }
-    this.gameOverLabel.setVisible(false);
+    this.gameOverLabel?.destroy(true);
+    this.gameOverLabel = this.add
+      .text(WIDTH / 2, HEIGHT / 2, 'YOU LOOSE', { fontSize: 30 })
+      .setOrigin(0.5)
+      .setDepth(1)
+      .setVisible(false);
 
+    this.scoreLabel?.destroy(true);
     this.scoreLabel = this.add.text(20, 20, '').setDepth(1);
     this.updateScore(0);
 
