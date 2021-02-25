@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import { STEP } from './config';
 
-export class ScoreTrigger extends Phaser.GameObjects.Rectangle {
+export class PipeScoreTrigger extends Phaser.GameObjects.Rectangle {
   body: Phaser.Physics.Arcade.Body;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
@@ -12,7 +12,7 @@ export class ScoreTrigger extends Phaser.GameObjects.Rectangle {
   }
 }
 
-export class PipeTrigger extends Phaser.GameObjects.Rectangle {
+export class PipeMoveTrigger extends Phaser.GameObjects.Rectangle {
   body: Phaser.Physics.Arcade.Body;
 
   constructor(scene: Phaser.Scene) {

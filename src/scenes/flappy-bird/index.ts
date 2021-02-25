@@ -65,7 +65,7 @@ export class FlappyBirdScene extends Phaser.Scene {
       }
     }
 
-    this.physics.collide(this.bird, this.pipes.obstackles, () => {
+    this.physics.collide(this.bird, this.pipes.obstacles, () => {
       this.gameOver();
     });
     this.physics.overlap(

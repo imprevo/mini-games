@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { WIDTH, HEIGHT, STEP, PIPE_GAP } from './config';
-import { PipeTrigger, ScoreTrigger } from './triggers';
+import { PipeMoveTrigger, PipeScoreTrigger } from './triggers';
 
 class Pipe extends Phaser.GameObjects.Rectangle {
   body: Phaser.Physics.Arcade.Body;
@@ -13,34 +13,34 @@ class Pipe extends Phaser.GameObjects.Rectangle {
   }
 }
 
-type PipeGroup = [Pipe, Pipe, ScoreTrigger];
+type PipeGroup = [Pipe, Pipe, PipeScoreTrigger];
 
 export class Pipes extends Phaser.GameObjects.Container {
   lastPosition = WIDTH - STEP;
   pipes: PipeGroup[] = [];
 
-  obstackles: Phaser.GameObjects.Group;
+  obstacles: Phaser.GameObjects.Group;
   scoreTriggers: Phaser.GameObjects.Group;
-  pipeTrigger: PipeTrigger;
+  moveTrigger: PipeMoveTrigger;
 
   constructor(scene: Phaser.Scene) {
     super(scene);
     scene.add.existing(this);
-    this.obstackles = scene.add.group();
+    this.obstacles = scene.add.group();
     this.scoreTriggers = scene.add.group();
-    this.pipeTrigger = new PipeTrigger(this.scene);
+    this.moveTrigger = new PipeMoveTrigger(this.scene);
   }
 
   destroy(fromScene?: boolean) {
-    this.obstackles.destroy(fromScene);
+    this.obstacles.destroy(fromScene);
     this.scoreTriggers.destroy(fromScene);
-    this.pipeTrigger.destroy(fromScene);
+    this.moveTrigger.destroy(fromScene);
     super.destroy(fromScene);
   }
 
   update() {
-    this.pipeTrigger.update();
-    this.scene.physics.collide(this.pipeTrigger, this.obstackles, () => {
+    this.moveTrigger.update();
+    this.scene.physics.collide(this.moveTrigger, this.obstacles, () => {
       this.movePipe();
     });
   }
@@ -56,9 +56,9 @@ export class Pipes extends Phaser.GameObjects.Container {
     const { x, y } = this.getNewCoords(this.lastPosition);
     const top = new Pipe(this.scene, x, y - PIPE_GAP / 2).setOrigin(1, 1);
     const bottom = new Pipe(this.scene, x, y + PIPE_GAP / 2).setOrigin(1, 0);
-    const trigger = new ScoreTrigger(this.scene, x, y);
+    const trigger = new PipeScoreTrigger(this.scene, x, y);
 
-    this.obstackles.addMultiple([top, bottom]);
+    this.obstacles.addMultiple([top, bottom]);
     this.scoreTriggers.add(trigger);
     const pipe: PipeGroup = [top, bottom, trigger];
     return pipe;
