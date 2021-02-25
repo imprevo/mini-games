@@ -30,10 +30,12 @@ export class FlappyBirdScene extends Phaser.Scene {
     this.cameras.main.startFollow(this.bird, true, 0.08, 0.08);
 
     this.pipes?.destroy(true);
+    this.pipes?.obstackles?.destroy(true);
+    this.pipes?.scoreTriggers?.destroy(true);
     this.pipes = new Pipes(this);
     this.pipes.createPipes();
 
-    this.pipeTrigger?.destroy();
+    this.pipeTrigger?.destroy(true);
     this.pipeTrigger = new PipeTrigger(this);
 
     this.isGameOver = false;
@@ -71,12 +73,22 @@ export class FlappyBirdScene extends Phaser.Scene {
       }
     }
 
-    this.physics.collide(this.bird, this.pipes, () => {
+    this.physics.collide(this.bird, this.pipes.obstackles, () => {
       this.gameOver();
     });
+    this.physics.overlap(
+      this.bird,
+      this.pipes.scoreTriggers,
+      (bird, scoreTrigger) => {
+        if (scoreTrigger.active) {
+          scoreTrigger.setActive(false);
+          this.updateScore(this.score + 1);
+        }
+      }
+    );
 
     this.pipeTrigger.update();
-    this.physics.collide(this.pipeTrigger, this.pipes, () => {
+    this.physics.collide(this.pipeTrigger, this.pipes.obstackles, () => {
       this.pipes.movePipe();
     });
   }
