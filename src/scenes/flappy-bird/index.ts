@@ -36,10 +36,14 @@ export class FlappyBirdScene extends Phaser.Scene {
       .text(WIDTH / 2, HEIGHT / 2, 'YOU LOOSE', { fontSize: 30 })
       .setOrigin(0.5)
       .setDepth(1)
-      .setVisible(false);
+      .setVisible(false)
+      .setScrollFactor(0, 0);
 
     this.scoreLabel?.destroy(true);
-    this.scoreLabel = this.add.text(20, 20, '').setDepth(1);
+    this.scoreLabel = this.add
+      .text(20, 20, '')
+      .setDepth(1)
+      .setScrollFactor(0, 0);
     this.updateScore(0);
 
     this.physics.world.once('worldbounds', () => {
