@@ -1,6 +1,5 @@
 import * as Phaser from 'phaser';
-import { Bird } from './Bird';
-import { PipeTrigger } from './PipeTrigger';
+import { Bird } from './bird';
 import { WIDTH, HEIGHT } from './config';
 import { Pipes } from './pipes';
 
@@ -13,8 +12,6 @@ export class FlappyBirdScene extends Phaser.Scene {
 
   score: number;
   scoreLabel: Phaser.GameObjects.Text;
-
-  pipeTrigger: PipeTrigger;
 
   constructor() {
     super('FlappyBirdScene');
@@ -30,13 +27,8 @@ export class FlappyBirdScene extends Phaser.Scene {
     this.cameras.main.startFollow(this.bird, true, 0.08, 0.08);
 
     this.pipes?.destroy(true);
-    this.pipes?.obstackles?.destroy(true);
-    this.pipes?.scoreTriggers?.destroy(true);
     this.pipes = new Pipes(this);
     this.pipes.createPipes();
-
-    this.pipeTrigger?.destroy(true);
-    this.pipeTrigger = new PipeTrigger(this);
 
     this.isGameOver = false;
     this.gameOverLabel?.destroy(true);
@@ -87,10 +79,7 @@ export class FlappyBirdScene extends Phaser.Scene {
       }
     );
 
-    this.pipeTrigger.update();
-    this.physics.collide(this.pipeTrigger, this.pipes.obstackles, () => {
-      this.pipes.movePipe();
-    });
+    this.pipes.update();
   }
 
   gameOver() {
