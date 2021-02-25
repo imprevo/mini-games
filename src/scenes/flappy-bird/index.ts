@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import { Bird } from './Bird';
+import { PipeTrigger } from './PipeTrigger';
 import { WIDTH, HEIGHT } from './config';
 import { Pipes } from './pipes';
 
@@ -12,6 +13,8 @@ export class FlappyBirdScene extends Phaser.Scene {
 
   score: number;
   scoreLabel: Phaser.GameObjects.Text;
+
+  pipeTrigger: PipeTrigger;
 
   constructor() {
     super('FlappyBirdScene');
@@ -29,6 +32,9 @@ export class FlappyBirdScene extends Phaser.Scene {
     this.pipes?.destroy(true);
     this.pipes = new Pipes(this);
     this.pipes.createPipes();
+
+    this.pipeTrigger?.destroy();
+    this.pipeTrigger = new PipeTrigger(this);
 
     this.isGameOver = false;
     this.gameOverLabel?.destroy(true);
@@ -57,25 +63,30 @@ export class FlappyBirdScene extends Phaser.Scene {
 
   update(time: number) {
     const keys = this.input.keyboard.createCursorKeys();
-    if (this.isGameOver) {
-      if (keys.space.isDown) {
+    if (keys.space.isDown) {
+      if (this.isGameOver) {
         this.create();
-      }
-    } else {
-      if (keys.space.isDown) {
+      } else {
         this.bird.jump();
       }
-
-      this.physics.collide(this.bird, this.pipes, () => {
-        this.gameOver();
-      });
     }
+
+    this.physics.collide(this.bird, this.pipes, () => {
+      this.gameOver();
+    });
+
+    this.pipeTrigger.update();
+    this.physics.collide(this.pipeTrigger, this.pipes, () => {
+      this.pipes.movePipe();
+    });
   }
 
   gameOver() {
-    this.isGameOver = true;
-    this.gameOverLabel.setVisible(true);
-    this.bird.stop();
+    if (!this.isGameOver) {
+      this.isGameOver = true;
+      this.gameOverLabel.setVisible(true);
+      this.bird.stop();
+    }
   }
 
   updateScore(score: number) {

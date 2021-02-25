@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { WIDTH, HEIGHT } from './config';
+import { WIDTH, HEIGHT, STEP, PIPE_GAP } from './config';
 
 class Pipe extends Phaser.GameObjects.Rectangle {
   body: Phaser.Physics.Arcade.Body;
@@ -13,25 +13,44 @@ class Pipe extends Phaser.GameObjects.Rectangle {
 }
 
 export class Pipes extends Phaser.GameObjects.Group {
+  lastPosition = WIDTH - STEP;
+  pipes: [Pipe, Pipe][] = [];
+
   constructor(scene: Phaser.Scene) {
     super(scene);
     scene.add.existing(this);
   }
 
   createPipes() {
-    for (let index = 0; index < 5; index++) {
-      const { x, y } = this.getNewCoords(index);
-      const top = new Pipe(this.scene, x, y - 100).setOrigin(1, 1);
-      const bottom = new Pipe(this.scene, x, y + 100).setOrigin(1, 0);
-
-      this.addMultiple([top, bottom]);
+    for (let index = 0; index < 10; index++) {
+      this.pipes.push(this.addPipe());
     }
   }
 
-  getNewCoords(index: number) {
-    const x = WIDTH + index * 200;
-    const y = Phaser.Math.Between(200, HEIGHT - 200);
+  addPipe() {
+    this.lastPosition += STEP;
+    const { x, y } = this.getNewCoords(this.lastPosition);
+    const top = new Pipe(this.scene, x, y - 100).setOrigin(1, 1);
+    const bottom = new Pipe(this.scene, x, y + 100).setOrigin(1, 0);
 
+    const pipe: [Pipe, Pipe] = [top, bottom];
+    this.addMultiple(pipe);
+    return pipe;
+  }
+
+  movePipe() {
+    const pipe = this.pipes.shift();
+
+    this.lastPosition += STEP;
+    const { x, y } = this.getNewCoords(this.lastPosition);
+    pipe[0].setPosition(x, y - PIPE_GAP / 2);
+    pipe[1].setPosition(x, y + PIPE_GAP / 2);
+
+    this.pipes.push(pipe);
+  }
+
+  getNewCoords(x: number) {
+    const y = Phaser.Math.Between(PIPE_GAP, HEIGHT - PIPE_GAP);
     return { x, y };
   }
 }
