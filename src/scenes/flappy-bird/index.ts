@@ -1,9 +1,11 @@
 import * as Phaser from 'phaser';
 import { Bird } from './Bird';
 import { WIDTH, HEIGHT } from './config';
+import { Pipes } from './pipes';
 
 export class FlappyBirdScene extends Phaser.Scene {
   bird: Bird;
+  pipes: Pipes;
 
   isGameOver = false;
   gameOverLabel: Phaser.GameObjects.Text;
@@ -16,10 +18,17 @@ export class FlappyBirdScene extends Phaser.Scene {
   }
 
   create() {
-    this.physics.world.setBounds(0, 0, WIDTH, HEIGHT);
+    this.physics.world.setBounds(0, 0, Infinity, HEIGHT);
+    this.cameras.main.setBounds(0, 0, Infinity, 0);
 
     this.bird?.destroy(true);
     this.bird = new Bird(this, 200, HEIGHT / 2);
+
+    this.cameras.main.startFollow(this.bird, true, 0.08, 0.08);
+
+    this.pipes?.destroy(true);
+    this.pipes = new Pipes(this);
+    this.pipes.createPipes();
 
     this.isGameOver = false;
     this.gameOverLabel?.destroy(true);
@@ -52,12 +61,17 @@ export class FlappyBirdScene extends Phaser.Scene {
       if (keys.space.isDown) {
         this.bird.jump();
       }
+
+      this.physics.collide(this.bird, this.pipes, () => {
+        this.gameOver();
+      });
     }
   }
 
   gameOver() {
     this.isGameOver = true;
     this.gameOverLabel.setVisible(true);
+    this.bird.stop();
   }
 
   updateScore(score: number) {

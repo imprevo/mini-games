@@ -13,6 +13,10 @@ export class Bird extends Phaser.GameObjects.Rectangle {
   }
 
   jump() {
-    this.body.setVelocityY(-250);
+    this.body.setVelocity(100, -250);
+  }
+
+  stop() {
+    this.body.setVelocityX(0);
   }
 }
