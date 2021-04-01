@@ -6,7 +6,7 @@ export class Cannon extends Phaser.GameObjects.Rectangle {
   isShot = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number, bird: Bird) {
-    super(scene, x, y, 50, 80, 0xff0000);
+    super(scene, x, y, 50, 80, 0xffffff);
     scene.add.existing(this);
     this.bird = bird;
     this.snapBird();

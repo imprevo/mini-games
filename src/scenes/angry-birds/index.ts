@@ -2,9 +2,11 @@ import * as Phaser from 'phaser';
 import { Bird } from './bird';
 import { Cannon } from './cannon';
 import { WIDTH, HEIGHT } from './config';
+import { Enemy } from './enemy';
 
 export class AngryBirdsScene extends Phaser.Scene {
   bird: Bird;
+  enemy: Enemy;
   cannon: Cannon;
 
   isGameOver = false;
@@ -27,6 +29,9 @@ export class AngryBirdsScene extends Phaser.Scene {
     // this.add.weapon
     this.cannon?.destroy(true);
     this.cannon = new Cannon(this, 200, HEIGHT - 80, this.bird);
+
+    this.enemy?.destroy(true);
+    this.enemy = new Enemy(this, 500, HEIGHT - 20);
 
     this.cameras.main.startFollow(this.cannon.bird, true, 0.08, 0.08);
 
@@ -65,6 +70,11 @@ export class AngryBirdsScene extends Phaser.Scene {
       }
     }
     this.cannon.followCursor();
+
+    this.physics.collide(this.bird, this.enemy, (_bird, _enemy) => {
+      _enemy.destroy();
+      this.updateScore(this.score + 1);
+    });
   }
 
   gameOver() {
