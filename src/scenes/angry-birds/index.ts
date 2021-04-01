@@ -6,13 +6,12 @@ import { Enemy } from './enemy';
 
 export class AngryBirdsScene extends Phaser.Scene {
   birds: Phaser.GameObjects.Group;
-  activeBird: Bird;
   enemies: Phaser.GameObjects.Group;
   cannon: Cannon;
 
   isGameOver = false;
   gameOverLabel: Phaser.GameObjects.Text;
-  winLabel: Phaser.GameObjects.Text;
+  gameWinLabel: Phaser.GameObjects.Text;
 
   score: number;
   scoreLabel: Phaser.GameObjects.Text;
@@ -51,8 +50,8 @@ export class AngryBirdsScene extends Phaser.Scene {
       .setDepth(1)
       .setVisible(false)
       .setScrollFactor(0, 0);
-    this.winLabel?.destroy(true);
-    this.winLabel = this.add
+    this.gameWinLabel?.destroy(true);
+    this.gameWinLabel = this.add
       .text(WIDTH / 2, HEIGHT / 2, 'YOU WIN', { fontSize: 30 })
       .setOrigin(0.5)
       .setDepth(1)
@@ -72,10 +71,6 @@ export class AngryBirdsScene extends Phaser.Scene {
       .setDepth(1)
       .setScrollFactor(0, 0);
     this.updateLives(3);
-
-    this.physics.world.on('worldbounds', () => {
-      this.birdOnGround();
-    });
 
     this.input.keyboard.on('keydown_ESC', () => {
       this.scene.start('MainScene');
@@ -106,11 +101,16 @@ export class AngryBirdsScene extends Phaser.Scene {
     }
   }
 
-  birdOnGround() {
-    this.activeBird.stop();
+  gameWin() {
+    if (!this.isGameOver) {
+      this.isGameOver = true;
+      this.gameWinLabel.setVisible(true);
+    }
+  }
 
+  checkGameStatus() {
     if (!this.enemies.getChildren().length) {
-      this.winLabel.setVisible(true);
+      this.gameWin();
     } else if (this.lives <= 0) {
       this.gameOver();
     } else {
@@ -120,10 +120,15 @@ export class AngryBirdsScene extends Phaser.Scene {
   }
 
   setNextBird() {
-    this.activeBird = new Bird(this, 0, 0).setDepth(1);
-    this.birds.add(this.activeBird);
-    this.cannon.snapBird(this.activeBird);
-    this.cameras.main.startFollow(this.activeBird, true, 0.08, 0.08);
+    const bird = new Bird(this, 0, 0).setDepth(1);
+    this.birds.add(bird);
+    this.cannon.snapBird(bird);
+    this.cameras.main.startFollow(bird, true, 0.08, 0.08);
+
+    this.physics.world.once('worldbounds', () => {
+      bird.stop();
+      this.checkGameStatus();
+    });
   }
 
   updateScore(score: number) {
