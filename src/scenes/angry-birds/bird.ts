@@ -18,5 +18,6 @@ export class Bird extends Phaser.GameObjects.Rectangle {
 
   stop() {
     this.body.setVelocityX(0);
+    this.body.onWorldBounds = false;
   }
 }
