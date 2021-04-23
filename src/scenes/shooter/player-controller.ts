@@ -23,5 +23,9 @@ export class PlayerController {
     } else if (keys.down.isDown) {
       this.player.move(-3);
     }
+
+    if (keys.space.isDown) {
+      this.player.fire();
+    }
   }
 }

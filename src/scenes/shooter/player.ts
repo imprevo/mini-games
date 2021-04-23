@@ -12,35 +12,39 @@ class PlayerHead extends Phaser.GameObjects.Rectangle {
 }
 
 export class Player extends Phaser.GameObjects.Container {
-  playerHead: PlayerHead;
-  playerWeapon: Weapon;
+  head: PlayerHead;
+  weapon: Weapon;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene);
-    this.playerHead = new PlayerHead(scene, x, y);
-    this.playerHead.angle = -90;
-    this.playerWeapon = new Weapon(scene, x, y);
-    this.playerWeapon.setOrigin(-1, 0);
+    this.head = new PlayerHead(scene, x, y);
+    this.head.angle = -90;
+    this.weapon = new Weapon(scene, x, y);
+    this.weapon.setOrigin(-1, 0.5);
     this.snapWeapon();
   }
 
   snapWeapon() {
-    this.playerWeapon.x = this.playerHead.x;
-    this.playerWeapon.y = this.playerHead.y;
-    this.playerWeapon.angle = this.playerHead.angle;
+    this.weapon.x = this.head.x;
+    this.weapon.y = this.head.y;
+    this.weapon.angle = this.head.angle;
   }
 
   move(distance) {
     const vec = new Phaser.Math.Vector2();
-    vec.setToPolar(this.playerHead.rotation, distance);
+    vec.setToPolar(this.head.rotation, distance);
 
-    this.playerHead.body.x += vec.x;
-    this.playerHead.body.y += vec.y;
+    this.head.body.x += vec.x;
+    this.head.body.y += vec.y;
     this.snapWeapon();
   }
 
   rotate(angle: number) {
-    this.playerHead.angle += angle;
+    this.head.angle += angle;
     this.snapWeapon();
+  }
+
+  fire() {
+    this.weapon.fire();
   }
 }
