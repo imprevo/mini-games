@@ -8,6 +8,7 @@ class PlayerHead extends Phaser.GameObjects.Rectangle {
     super(scene, x, y, 40, 40, 0xffffff);
     scene.add.existing(this);
     scene.physics.add.existing(this);
+    this.body.immovable = true;
   }
 }
 
@@ -15,10 +16,10 @@ export class Player extends Phaser.GameObjects.Container {
   head: PlayerHead;
   weapon: Weapon;
 
-  constructor(scene: Phaser.Scene, x: number, y: number) {
+  constructor(scene: Phaser.Scene, x: number, y: number, angle: number) {
     super(scene);
     this.head = new PlayerHead(scene, x, y);
-    this.head.angle = -90;
+    this.head.angle = -angle;
     this.weapon = new Weapon(scene, x, y);
     this.weapon.setOrigin(-1, 0.5);
     this.snapWeapon();
