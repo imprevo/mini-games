@@ -2,12 +2,22 @@ import * as Phaser from 'phaser';
 import { Bullet } from './bullet';
 
 export class Weapon extends Phaser.GameObjects.Rectangle {
-  fireRate = 400;
+  fireRate: number;
   bulletSpeed = 500;
   lastFireRate = 0;
 
-  constructor(scene: Phaser.Scene, x: number, y: number) {
+  bullets: Phaser.GameObjects.Group;
+
+  constructor(
+    scene: Phaser.Scene,
+    x: number,
+    y: number,
+    fireRate: number,
+    bullets: Phaser.GameObjects.Group
+  ) {
     super(scene, x, y, 20, 4, 0xcccccc);
+    this.fireRate = fireRate;
+    this.bullets = bullets;
   }
 
   fire() {
@@ -24,6 +34,7 @@ export class Weapon extends Phaser.GameObjects.Rectangle {
         this.bulletSpeed
       );
       bullet.rotation = this.parentContainer.rotation;
+      this.bullets.add(bullet);
       bullet.fire();
     }
   }

@@ -12,7 +12,15 @@ export class Player extends Phaser.GameObjects.Container {
   head: PlayerHead;
   weapon: Weapon;
 
-  constructor(scene: Phaser.Scene, x: number, y: number, angle: number) {
+  constructor(
+    scene: Phaser.Scene,
+    x: number,
+    y: number,
+    angle: number,
+    fireRate: number,
+
+    bullets: Phaser.GameObjects.Group
+  ) {
     super(scene, x, y);
     scene.add.existing(this);
     scene.physics.world.enableBody(this);
@@ -20,7 +28,7 @@ export class Player extends Phaser.GameObjects.Container {
     this.head = new PlayerHead(scene, 0, 0);
     this.add(this.head);
 
-    this.weapon = new Weapon(scene, 30, 0);
+    this.weapon = new Weapon(scene, 30, 0, fireRate, bullets);
     this.add(this.weapon);
 
     this.angle = -angle;
