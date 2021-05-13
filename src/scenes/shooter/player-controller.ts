@@ -19,9 +19,9 @@ export class PlayerController {
     }
 
     if (keys.up.isDown) {
-      this.player.move(5);
+      this.player.move(200);
     } else if (keys.down.isDown) {
-      this.player.move(-3);
+      this.player.move(-150);
     }
 
     if (keys.space.isDown) {

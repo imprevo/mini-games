@@ -8,15 +8,19 @@ export class Weapon extends Phaser.GameObjects.Rectangle {
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 20, 4, 0xcccccc);
-    scene.add.existing(this);
   }
 
   fire() {
     if (Date.now() > this.lastFireRate + this.fireRate) {
       this.lastFireRate = Date.now();
 
-      const bullet = new Bullet(this.scene, this.x, this.y, this.bulletSpeed);
-      bullet.rotation = this.rotation;
+      const bullet = new Bullet(
+        this.scene,
+        this.parentContainer.x,
+        this.parentContainer.y,
+        this.bulletSpeed
+      );
+      bullet.rotation = this.parentContainer.rotation;
       bullet.fire();
     }
   }

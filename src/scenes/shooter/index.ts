@@ -29,6 +29,7 @@ export class ShooterScene extends Phaser.Scene {
 
   update(time: number) {
     this.playerController.update(time);
+    this.physics.collide(this.player, this.enemies);
 
     this.enemies.getChildren().forEach((enemy: Player) => enemy.fire());
   }
