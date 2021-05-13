@@ -14,10 +14,13 @@ export class Weapon extends Phaser.GameObjects.Rectangle {
     if (Date.now() > this.lastFireRate + this.fireRate) {
       this.lastFireRate = Date.now();
 
+      const vec = new Phaser.Math.Vector2();
+      vec.setToPolar(this.parentContainer.rotation, 40);
+
       const bullet = new Bullet(
         this.scene,
-        this.parentContainer.x,
-        this.parentContainer.y,
+        this.parentContainer.x + vec.x,
+        this.parentContainer.y + vec.y,
         this.bulletSpeed
       );
       bullet.rotation = this.parentContainer.rotation;
