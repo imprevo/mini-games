@@ -15,5 +15,9 @@ export class Bullet extends Phaser.GameObjects.Rectangle {
     const vec = new Phaser.Math.Vector2();
     vec.setToPolar(this.rotation, this.speed);
     this.body.setVelocity(vec.x, vec.y);
+    this.scene.time.addEvent({
+      delay: 5000,
+      callback: () => this.destroy(),
+    });
   }
 }
