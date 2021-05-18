@@ -47,6 +47,14 @@ export class Player extends Phaser.GameObjects.Container {
 
   rotate(angle: number) {
     this.angle += angle;
+
+    const vec = new Phaser.Math.Vector2(
+      this.body.velocity.x,
+      this.body.velocity.y
+    );
+    vec.setAngle(vec.angle() + Phaser.Math.DegToRad(angle));
+
+    this.body.setVelocity(vec.x, vec.y);
   }
 
   fire() {
