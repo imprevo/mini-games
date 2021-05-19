@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import { WIDTH, HEIGHT } from './config';
+import { EnemiesController } from './enemies-controller';
 import { Player } from './player';
 import { PlayerController } from './player-controller';
 
@@ -9,6 +10,8 @@ export class ShooterScene extends Phaser.Scene {
   isGameOver = false;
 
   enemies: Phaser.GameObjects.Group;
+  enemiesController: EnemiesController;
+
   bullets: Phaser.GameObjects.Group;
 
   constructor() {
@@ -28,6 +31,11 @@ export class ShooterScene extends Phaser.Scene {
     this.playerController = new PlayerController(this, this.player);
 
     this.enemies = this.add.group();
+    this.enemiesController = new EnemiesController(
+      this,
+      this.enemies,
+      this.player
+    );
 
     this.enemies.add(
       new Player(this, WIDTH / 5, HEIGHT / 5, -45, 600, this.bullets)
@@ -43,9 +51,10 @@ export class ShooterScene extends Phaser.Scene {
     // this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
   }
 
-  update(time: number) {
+  update(time: number, delta: number) {
     if (!this.isGameOver) {
-      this.playerController.update(time);
+      this.playerController.update(time, delta);
+      this.enemiesController.update(time, delta);
     }
 
     this.physics.collide(this.player, this.enemies);
@@ -58,7 +67,5 @@ export class ShooterScene extends Phaser.Scene {
       _player.destroy();
       this.isGameOver = true;
     });
-
-    this.enemies.getChildren().forEach((enemy: Player) => enemy.fire());
   }
 }

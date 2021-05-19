@@ -5,11 +5,11 @@ export class PlayerController {
   player: Player;
 
   constructor(scene: Phaser.Scene, player: Player) {
-    this.player = player;
     this.scene = scene;
+    this.player = player;
   }
 
-  update(time: number) {
+  update(time: number, delta: number) {
     const keys = this.scene.input.keyboard.createCursorKeys();
 
     if (keys.left.isDown) {
