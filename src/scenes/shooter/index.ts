@@ -1,11 +1,11 @@
 import * as Phaser from 'phaser';
 import { WIDTH, HEIGHT } from './config';
 import { EnemiesController } from './enemies-controller';
-import { Player } from './player';
 import { PlayerController } from './player-controller';
+import { Unit } from './unit';
 
 export class ShooterScene extends Phaser.Scene {
-  player: Player;
+  player: Unit;
   playerController: PlayerController;
   isGameOver = false;
 
@@ -20,7 +20,7 @@ export class ShooterScene extends Phaser.Scene {
 
   create() {
     this.bullets = this.add.group();
-    this.player = new Player(
+    this.player = new Unit(
       this,
       WIDTH / 2,
       (HEIGHT / 4) * 3,
@@ -38,13 +38,13 @@ export class ShooterScene extends Phaser.Scene {
     );
 
     this.enemies.add(
-      new Player(this, WIDTH / 5, HEIGHT / 5, -45, 600, this.bullets)
+      new Unit(this, WIDTH / 5, HEIGHT / 5, 90, 600, this.bullets)
     );
     this.enemies.add(
-      new Player(this, WIDTH / 2, HEIGHT / 5, -100, 800, this.bullets)
+      new Unit(this, WIDTH / 2, HEIGHT / 5, 90, 800, this.bullets)
     );
     this.enemies.add(
-      new Player(this, (WIDTH / 10) * 8, HEIGHT / 5, -135, 1000, this.bullets)
+      new Unit(this, (WIDTH / 10) * 8, HEIGHT / 5, 90, 1000, this.bullets)
     );
 
     // this.cameras.main.setBounds(0, 0, Infinity, 0);

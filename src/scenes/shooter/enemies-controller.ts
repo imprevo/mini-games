@@ -1,14 +1,14 @@
-import { Player } from './player';
+import { Unit } from './unit';
 
 export class EnemiesController {
   scene: Phaser.Scene;
   enemies: Phaser.GameObjects.Group;
-  player: Player;
+  player: Unit;
 
   constructor(
     scene: Phaser.Scene,
     enemies: Phaser.GameObjects.Group,
-    player: Player
+    player: Unit
   ) {
     this.scene = scene;
     this.enemies = enemies;
@@ -16,16 +16,27 @@ export class EnemiesController {
   }
 
   update(time: number, delta: number) {
-    this.enemies.getChildren().forEach((enemy: Player) => {
-      const rotation = Phaser.Math.Angle.Between(
-        enemy.x,
-        enemy.y,
-        this.player.x,
-        this.player.y
+    this.enemies.getChildren().forEach((enemy: Unit) => {
+      const rotationToPlayer = Phaser.Math.Angle.BetweenPoints(
+        enemy,
+        this.player
       );
-      enemy.rotation = rotation + 0.3;
+      const deltaRotation = Phaser.Math.Angle.RotateTo(
+        enemy.rotation,
+        rotationToPlayer,
+        0.001 * delta
+      );
 
-      enemy.fire();
+      enemy.rotation = deltaRotation;
+
+      const diff = Phaser.Math.Angle.ShortestBetween(
+        Phaser.Math.RadToDeg(enemy.rotation),
+        Phaser.Math.RadToDeg(rotationToPlayer)
+      );
+
+      if (Math.abs(diff) < 10) {
+        enemy.fire();
+      }
     });
   }
 }

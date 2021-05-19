@@ -1,15 +1,15 @@
 import * as Phaser from 'phaser';
 import { Weapon } from './weapon';
 
-class PlayerHead extends Phaser.GameObjects.Rectangle {
+class UnitHead extends Phaser.GameObjects.Rectangle {
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 40, 40, 0xffffff);
   }
 }
 
-export class Player extends Phaser.GameObjects.Container {
+export class Unit extends Phaser.GameObjects.Container {
   body: Phaser.Physics.Arcade.Body;
-  head: PlayerHead;
+  head: UnitHead;
   weapon: Weapon;
 
   constructor(
@@ -25,7 +25,7 @@ export class Player extends Phaser.GameObjects.Container {
     scene.add.existing(this);
     scene.physics.world.enableBody(this);
 
-    this.head = new PlayerHead(scene, 0, 0);
+    this.head = new UnitHead(scene, 0, 0);
     this.add(this.head);
 
     this.weapon = new Weapon(scene, 30, 0, fireRate, bullets);

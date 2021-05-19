@@ -1,10 +1,10 @@
-import { Player } from './player';
+import { Unit } from './unit';
 
 export class PlayerController {
   scene: Phaser.Scene;
-  player: Player;
+  player: Unit;
 
-  constructor(scene: Phaser.Scene, player: Player) {
+  constructor(scene: Phaser.Scene, player: Unit) {
     this.scene = scene;
     this.player = player;
   }
@@ -13,15 +13,15 @@ export class PlayerController {
     const keys = this.scene.input.keyboard.createCursorKeys();
 
     if (keys.left.isDown) {
-      this.player.rotate(-5);
+      this.player.rotate(-0.3 * delta);
     } else if (keys.right.isDown) {
-      this.player.rotate(5);
+      this.player.rotate(0.3 * delta);
     }
 
     if (keys.up.isDown) {
-      this.player.move(200);
+      this.player.move(15 * delta);
     } else if (keys.down.isDown) {
-      this.player.move(-150);
+      this.player.move(-10 * delta);
     }
 
     if (keys.space.isDown) {
