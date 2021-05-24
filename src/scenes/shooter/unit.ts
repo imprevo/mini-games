@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { Weapon, Pistol, Shotgun, Rifle } from './weapon';
+import { Weapon } from './weapon';
 
 class UnitHead extends Phaser.GameObjects.Rectangle {
   constructor(scene: Phaser.Scene, x: number, y: number) {
@@ -10,24 +10,15 @@ class UnitHead extends Phaser.GameObjects.Rectangle {
 export class Unit extends Phaser.GameObjects.Container {
   body: Phaser.Physics.Arcade.Body;
   head: UnitHead;
-  weapon: Weapon;
+  weapon: Weapon | null;
 
-  constructor(
-    scene: Phaser.Scene,
-    x: number,
-    y: number,
-    angle: number,
-    bullets: Phaser.GameObjects.Group
-  ) {
+  constructor(scene: Phaser.Scene, x: number, y: number, angle: number) {
     super(scene, x, y);
     scene.add.existing(this);
     scene.physics.world.enableBody(this);
 
     this.head = new UnitHead(scene, 0, 0);
     this.add(this.head);
-
-    this.weapon = new Shotgun(scene, 30, 0, bullets);
-    this.add(this.weapon);
 
     this.angle = -angle;
 
@@ -56,6 +47,21 @@ export class Unit extends Phaser.GameObjects.Container {
   }
 
   fire() {
-    this.weapon.attack();
+    this.weapon?.attack();
+  }
+
+  setWeapon(nextWeapon: Weapon | null) {
+    if (this.weapon) {
+      // TODO: drop weapon
+      this.remove(this.weapon, true);
+    }
+
+    if (nextWeapon) {
+      nextWeapon.x = 30;
+      nextWeapon.y = 0;
+      this.add(nextWeapon);
+    }
+
+    this.weapon = nextWeapon;
   }
 }
