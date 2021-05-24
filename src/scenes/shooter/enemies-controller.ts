@@ -35,7 +35,12 @@ export class EnemiesController {
       );
 
       if (Math.abs(diff) < 10) {
-        enemy.fire();
+        const distance = Phaser.Math.Distance.BetweenPoints(enemy, this.player);
+        if (distance < 300) {
+          enemy.fire();
+        } else {
+          this.scene.physics.moveToObject(enemy, this.player, 10 * delta);
+        }
       }
     });
   }

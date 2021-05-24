@@ -17,7 +17,6 @@ export class Unit extends Phaser.GameObjects.Container {
     x: number,
     y: number,
     angle: number,
-    fireRate: number,
     bullets: Phaser.GameObjects.Group
   ) {
     super(scene, x, y);

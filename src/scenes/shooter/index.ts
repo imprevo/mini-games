@@ -20,14 +20,7 @@ export class ShooterScene extends Phaser.Scene {
 
   create() {
     this.bullets = this.add.group();
-    this.player = new Unit(
-      this,
-      WIDTH / 2,
-      (HEIGHT / 4) * 3,
-      90,
-      400,
-      this.bullets
-    );
+    this.player = new Unit(this, WIDTH / 2, (HEIGHT / 4) * 3, 90, this.bullets);
     this.playerController = new PlayerController(this, this.player);
 
     this.enemies = this.add.group();
@@ -37,14 +30,10 @@ export class ShooterScene extends Phaser.Scene {
       this.player
     );
 
+    this.enemies.add(new Unit(this, WIDTH / 5, HEIGHT / 5, 90, this.bullets));
+    this.enemies.add(new Unit(this, WIDTH / 2, HEIGHT / 5, 90, this.bullets));
     this.enemies.add(
-      new Unit(this, WIDTH / 5, HEIGHT / 5, 90, 600, this.bullets)
-    );
-    this.enemies.add(
-      new Unit(this, WIDTH / 2, HEIGHT / 5, 90, 800, this.bullets)
-    );
-    this.enemies.add(
-      new Unit(this, (WIDTH / 10) * 8, HEIGHT / 5, 90, 1000, this.bullets)
+      new Unit(this, (WIDTH / 10) * 8, HEIGHT / 5, 90, this.bullets)
     );
 
     // this.cameras.main.setBounds(0, 0, Infinity, 0);
