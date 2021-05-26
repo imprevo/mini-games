@@ -57,11 +57,24 @@ export class Unit extends Phaser.GameObjects.Container {
     }
 
     if (nextWeapon) {
+      nextWeapon.setBusy(true);
       nextWeapon.x = 30;
       nextWeapon.y = 0;
       this.add(nextWeapon);
     }
 
     this.weapon = nextWeapon;
+  }
+
+  dropWeapon() {
+    const weapon = this.weapon;
+    if (weapon) {
+      this.remove(weapon);
+      this.scene.add.existing(weapon);
+      weapon.x = this.x;
+      weapon.y = this.y;
+      weapon.setBusy(false);
+    }
+    return weapon;
   }
 }

@@ -4,6 +4,8 @@ import { Bullet } from './bullet';
 const getDeviation = () => Math.random() - 0.5;
 
 export class Weapon extends Phaser.GameObjects.Rectangle {
+  body: Phaser.Physics.Arcade.Body;
+
   fireRate: number;
   bulletSpeed = 500;
   lastFireRate = 0;
@@ -21,6 +23,7 @@ export class Weapon extends Phaser.GameObjects.Rectangle {
     super(scene, x, y, 20, 4, color);
     this.fireRate = fireRate;
     this.bullets = bullets;
+    this.scene.physics.add.existing(this);
   }
 
   createBullet(deltaRotation: number) {
@@ -48,6 +51,10 @@ export class Weapon extends Phaser.GameObjects.Rectangle {
 
   shoot() {
     throw Error('Method "shoot" should be implemented');
+  }
+
+  setBusy(busy: boolean) {
+    this.body.setEnable(!busy);
   }
 }
 

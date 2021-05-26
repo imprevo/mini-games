@@ -1,4 +1,4 @@
-import { Weapon, Pistol, Rifle, Shotgun } from './weapon';
+import { Pistol, Rifle, Shotgun } from './weapon';
 
 export enum WeaponType {
   PISTOL,
@@ -17,15 +17,9 @@ export class WeaponController {
     this.weapons = scene.add.group();
   }
 
-  createWeapon(
-    type: WeaponType,
-    point?: Phaser.Math.Vector2,
-    addToScene?: boolean
-  ) {
+  createWeapon(type: WeaponType, point?: Phaser.Math.Vector2) {
     const weapon = this.initWeapon(type, point);
-    if (addToScene) {
-      this.addWeaponToScene(weapon);
-    }
+    this.weapons.add(weapon, true);
     return weapon;
   }
 
@@ -43,15 +37,5 @@ export class WeaponController {
       default:
         throw Error(`Unknown weapon type ${type}`);
     }
-  }
-
-  addWeaponToScene(weapon: Weapon) {
-    this.weapons.add(weapon, true);
-    this.scene.physics.add.existing(weapon);
-  }
-
-  removeWeaponFromScene(weapon: Weapon) {
-    this.weapons.remove(weapon);
-    // TODO: disable physics?
   }
 }

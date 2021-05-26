@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import { Bullet } from './bullet';
 import { WIDTH, HEIGHT } from './config';
 import { EnemiesController } from './enemies-controller';
 import { PlayerController } from './player-controller';
@@ -38,18 +39,15 @@ export class ShooterScene extends Phaser.Scene {
 
     this.weaponsController.createWeapon(
       WeaponType.PISTOL,
-      new Phaser.Math.Vector2(WIDTH * 0.25, HEIGHT / 3),
-      true
+      new Phaser.Math.Vector2(WIDTH * 0.25, HEIGHT / 3)
     );
     this.weaponsController.createWeapon(
       WeaponType.RIFLE,
-      new Phaser.Math.Vector2(WIDTH * 0.5, HEIGHT / 3),
-      true
+      new Phaser.Math.Vector2(WIDTH * 0.5, HEIGHT / 3)
     );
     this.weaponsController.createWeapon(
       WeaponType.SHOTGUN,
-      new Phaser.Math.Vector2(WIDTH * 0.75, HEIGHT / 3),
-      true
+      new Phaser.Math.Vector2(WIDTH * 0.75, HEIGHT / 3)
     );
 
     this.enemies.add(new Unit(this, WIDTH / 5, HEIGHT / 5, 90));
@@ -71,15 +69,16 @@ export class ShooterScene extends Phaser.Scene {
     this.physics.collide(
       this.weaponsController.bullets,
       this.enemies,
-      (_bullet, _enemy) => {
+      (_bullet: Bullet, _enemy: Unit) => {
         _bullet.destroy();
+        _enemy.dropWeapon();
         _enemy.destroy();
       }
     );
     this.physics.collide(
       this.weaponsController.bullets,
       this.player,
-      (_bullet, _player) => {
+      (_bullet: Bullet, _player: Unit) => {
         _bullet.destroy();
         _player.destroy();
         this.isGameOver = true;
@@ -90,7 +89,6 @@ export class ShooterScene extends Phaser.Scene {
       this.weaponsController.weapons,
       this.enemies.getChildren().concat(this.player),
       (_weapon: Weapon, _unit: Unit) => {
-        this.weaponsController.weapons.remove(_weapon);
         _unit.setWeapon(_weapon);
       }
     );
