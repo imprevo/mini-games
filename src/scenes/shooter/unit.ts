@@ -12,6 +12,7 @@ export class Unit extends Phaser.GameObjects.Container {
   head: UnitHead;
   weapon: Weapon | null;
   lives: number;
+  livesLabel: Phaser.GameObjects.Text;
 
   constructor(
     scene: Phaser.Scene,
@@ -28,6 +29,18 @@ export class Unit extends Phaser.GameObjects.Container {
     this.add(this.head);
 
     this.lives = lives;
+    this.livesLabel = new Phaser.GameObjects.Text(
+      scene,
+      0,
+      0,
+      this.lives.toString(),
+      {
+        fontSize: '32px',
+        color: '0x000000',
+      }
+    ).setOrigin(0.5);
+    this.livesLabel.angle = 90;
+    this.add(this.livesLabel);
 
     this.angle = -angle;
 
@@ -89,6 +102,7 @@ export class Unit extends Phaser.GameObjects.Container {
 
   hit() {
     this.lives -= 1;
+    this.livesLabel.text = this.lives.toString();
     if (this.lives <= 0) {
       this.dropWeapon();
       this.destroy();
