@@ -24,7 +24,7 @@ export class ShooterScene extends Phaser.Scene {
   create() {
     this.weaponsController = new WeaponController(this);
 
-    this.player = new Unit(this, WIDTH / 2, (HEIGHT / 4) * 3, 90);
+    this.player = new Unit(this, WIDTH / 2, (HEIGHT / 4) * 3, 90, 3);
     this.player.setWeapon(
       this.weaponsController.createWeapon(WeaponType.PISTOL)
     );
@@ -50,9 +50,9 @@ export class ShooterScene extends Phaser.Scene {
       new Phaser.Math.Vector2(WIDTH * 0.75, HEIGHT / 3)
     );
 
-    this.enemies.add(new Unit(this, WIDTH / 5, HEIGHT / 5, 90));
-    this.enemies.add(new Unit(this, WIDTH / 2, HEIGHT / 5, 90));
-    this.enemies.add(new Unit(this, (WIDTH / 10) * 8, HEIGHT / 5, 90));
+    this.enemies.add(new Unit(this, WIDTH / 5, HEIGHT / 5, 90, 1));
+    this.enemies.add(new Unit(this, WIDTH / 2, HEIGHT / 5, 90, 2));
+    this.enemies.add(new Unit(this, (WIDTH / 10) * 8, HEIGHT / 5, 90, 3));
 
     // this.cameras.main.setBounds(0, 0, Infinity, 0);
     // this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
@@ -71,8 +71,7 @@ export class ShooterScene extends Phaser.Scene {
       this.enemies,
       (_bullet: Bullet, _enemy: Unit) => {
         _bullet.destroy();
-        _enemy.dropWeapon();
-        _enemy.destroy();
+        _enemy.hit();
       }
     );
     this.physics.collide(
@@ -80,8 +79,11 @@ export class ShooterScene extends Phaser.Scene {
       this.player,
       (_bullet: Bullet, _player: Unit) => {
         _bullet.destroy();
-        _player.destroy();
-        this.isGameOver = true;
+        _player.hit();
+
+        if (_player.lives <= 0) {
+          this.isGameOver = true;
+        }
       }
     );
 

@@ -11,14 +11,23 @@ export class Unit extends Phaser.GameObjects.Container {
   body: Phaser.Physics.Arcade.Body;
   head: UnitHead;
   weapon: Weapon | null;
+  lives: number;
 
-  constructor(scene: Phaser.Scene, x: number, y: number, angle: number) {
+  constructor(
+    scene: Phaser.Scene,
+    x: number,
+    y: number,
+    angle: number,
+    lives: number
+  ) {
     super(scene, x, y);
     scene.add.existing(this);
     scene.physics.world.enableBody(this);
 
     this.head = new UnitHead(scene, 0, 0);
     this.add(this.head);
+
+    this.lives = lives;
 
     this.angle = -angle;
 
@@ -76,5 +85,13 @@ export class Unit extends Phaser.GameObjects.Container {
       weapon.setBusy(false);
     }
     return weapon;
+  }
+
+  hit() {
+    this.lives -= 1;
+    if (this.lives <= 0) {
+      this.dropWeapon();
+      this.destroy();
+    }
   }
 }
