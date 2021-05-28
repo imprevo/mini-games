@@ -7,11 +7,47 @@ import { Unit } from './unit';
 import { Weapon } from './weapon';
 import { WeaponController, WeaponType } from './weapon-controller';
 
+// TODO: move logic somewhere
+type Wave = {
+  weaponType: WeaponType;
+  lives: number;
+};
+
+const waveConfig: Wave[][] = [
+  [{ weaponType: WeaponType.PISTOL, lives: 1 }],
+  [
+    { weaponType: WeaponType.PISTOL, lives: 1 },
+    { weaponType: WeaponType.PISTOL, lives: 1 },
+    { weaponType: WeaponType.PISTOL, lives: 1 },
+  ],
+  [
+    { weaponType: WeaponType.PISTOL, lives: 1 },
+    { weaponType: WeaponType.RIFLE, lives: 1 },
+    { weaponType: WeaponType.PISTOL, lives: 1 },
+  ],
+  [
+    { weaponType: WeaponType.RIFLE, lives: 1 },
+    { weaponType: WeaponType.RIFLE, lives: 1 },
+    { weaponType: WeaponType.RIFLE, lives: 1 },
+  ],
+  [
+    { weaponType: WeaponType.RIFLE, lives: 1 },
+    { weaponType: WeaponType.SHOTGUN, lives: 1 },
+    { weaponType: WeaponType.RIFLE, lives: 1 },
+  ],
+  [
+    { weaponType: WeaponType.SHOTGUN, lives: 1 },
+    { weaponType: WeaponType.SHOTGUN, lives: 1 },
+    { weaponType: WeaponType.SHOTGUN, lives: 1 },
+  ],
+];
+
 export class ShooterScene extends Phaser.Scene {
   player: Unit;
   playerController: PlayerController;
   isGameOver = false;
 
+  wave = 0;
   enemies: Phaser.GameObjects.Group;
   enemiesController: EnemiesController;
 
@@ -37,22 +73,8 @@ export class ShooterScene extends Phaser.Scene {
       this.player
     );
 
-    this.weaponsController.createWeapon(
-      WeaponType.PISTOL,
-      new Phaser.Math.Vector2(WIDTH * 0.25, HEIGHT / 3)
-    );
-    this.weaponsController.createWeapon(
-      WeaponType.RIFLE,
-      new Phaser.Math.Vector2(WIDTH * 0.5, HEIGHT / 3)
-    );
-    this.weaponsController.createWeapon(
-      WeaponType.SHOTGUN,
-      new Phaser.Math.Vector2(WIDTH * 0.75, HEIGHT / 3)
-    );
-
-    this.enemies.add(new Unit(this, WIDTH / 5, HEIGHT / 5, 90, 1));
-    this.enemies.add(new Unit(this, WIDTH / 2, HEIGHT / 5, 90, 2));
-    this.enemies.add(new Unit(this, (WIDTH / 10) * 8, HEIGHT / 5, 90, 3));
+    // TODO: spawn on triggers
+    this.spawnEnemy();
 
     this.physics.world.setBounds(0, -HEIGHT * 10, WIDTH, HEIGHT * 11);
     this.cameras.main.setBounds(0, -HEIGHT * 10, WIDTH, HEIGHT * 11);
@@ -95,5 +117,24 @@ export class ShooterScene extends Phaser.Scene {
         _unit.setWeapon(_weapon);
       }
     );
+  }
+
+  spawnEnemy() {
+    const currentWave = waveConfig[this.wave];
+
+    if (!currentWave) {
+      return;
+    }
+
+    this.wave += 1;
+
+    const deltaX = HEIGHT / (currentWave.length + 1);
+    const newY = this.player.y - HEIGHT;
+
+    currentWave.forEach((wave, index) => {
+      const enemy = new Unit(this, deltaX * (index + 1), newY, -90, wave.lives);
+      enemy.setWeapon(this.weaponsController.createWeapon(wave.weaponType));
+      this.enemies.add(enemy);
+    });
   }
 }
