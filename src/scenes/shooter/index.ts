@@ -54,8 +54,9 @@ export class ShooterScene extends Phaser.Scene {
     this.enemies.add(new Unit(this, WIDTH / 2, HEIGHT / 5, 90, 2));
     this.enemies.add(new Unit(this, (WIDTH / 10) * 8, HEIGHT / 5, 90, 3));
 
-    // this.cameras.main.setBounds(0, 0, Infinity, 0);
-    // this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
+    this.physics.world.setBounds(0, -HEIGHT * 10, WIDTH, HEIGHT * 11);
+    this.cameras.main.setBounds(0, -HEIGHT * 10, WIDTH, HEIGHT * 11);
+    this.cameras.main.startFollow(this.player, true, 0.05, 0.05, 0, HEIGHT / 4);
   }
 
   update(time: number, delta: number) {
