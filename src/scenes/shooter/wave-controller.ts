@@ -1,6 +1,8 @@
 import * as Phaser from 'phaser';
 import { WIDTH, HEIGHT } from './config';
 import { EnemiesController } from './enemies-controller';
+import { SceneMessage } from './scene-message';
+import { SceneTrigger } from './scene-trigger';
 import { Unit } from './unit';
 import { WeaponController, WeaponType } from './weapon-controller';
 
@@ -63,25 +65,6 @@ export const wavesConfig: WaveConfig[] = [
   },
 ];
 
-export class WaveTrigger extends Phaser.GameObjects.Rectangle {
-  body: Phaser.Physics.Arcade.Body;
-
-  constructor(scene: Phaser.Scene, x: number, y: number) {
-    super(scene, x, y, WIDTH, 10, 0xff0000, 0);
-    scene.add.existing(this);
-    scene.physics.add.existing(this);
-    this.setOrigin(0.5);
-  }
-}
-
-export class WaveMessage extends Phaser.GameObjects.Text {
-  constructor(scene: Phaser.Scene, x: number, y: number, text: string) {
-    super(scene, x, y, text, { fontSize: '64px' });
-    this.setOrigin(0.5);
-    this.setDepth(0);
-  }
-}
-
 export class WaveController {
   scene: Phaser.Scene;
   weaponsController: WeaponController;
@@ -106,8 +89,8 @@ export class WaveController {
     const x = WIDTH / 2;
     wavesConfig.forEach((wave, index) => {
       const y = -waveDeltaY * index;
-      this.waveTriggers.add(new WaveTrigger(this.scene, x, y));
-      this.scene.add.existing(new WaveMessage(this.scene, x, y, wave.text));
+      this.waveTriggers.add(new SceneTrigger(this.scene, x, y));
+      this.scene.add.existing(new SceneMessage(this.scene, x, y, wave.text));
     });
   }
 

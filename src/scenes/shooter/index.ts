@@ -3,13 +3,10 @@ import { Bullet } from './bullet';
 import { WIDTH, HEIGHT } from './config';
 import { EnemiesController } from './enemies-controller';
 import { PlayerController } from './player-controller';
+import { SceneMessage } from './scene-message';
+import { SceneTrigger } from './scene-trigger';
 import { Unit } from './unit';
-import {
-  wavesConfig,
-  WaveController,
-  WaveTrigger,
-  waveDeltaY,
-} from './wave-controller';
+import { wavesConfig, WaveController, waveDeltaY } from './wave-controller';
 import { Weapon } from './weapon';
 import { WeaponController, WeaponType } from './weapon-controller';
 
@@ -17,6 +14,8 @@ export class ShooterScene extends Phaser.Scene {
   player: Unit;
   playerController: PlayerController;
   isGameOver = false;
+  killsCount: number;
+  winTrigger: SceneTrigger;
 
   enemiesController: EnemiesController;
   weaponsController: WeaponController;
@@ -27,6 +26,9 @@ export class ShooterScene extends Phaser.Scene {
   }
 
   create() {
+    this.isGameOver = false;
+    this.killsCount = 0;
+
     this.weaponsController = new WeaponController(this);
 
     this.player = new Unit(this, WIDTH / 2, (HEIGHT / 4) * 3, 90, 1);
@@ -43,7 +45,15 @@ export class ShooterScene extends Phaser.Scene {
     );
     this.waveController.addWaveTriggers();
 
-    const topY = wavesConfig.length * waveDeltaY;
+    const lastWaveY = wavesConfig.length * waveDeltaY;
+    const topY = lastWaveY + HEIGHT / 3;
+
+    this.winTrigger = new SceneTrigger(this, WIDTH / 2, -lastWaveY);
+    this.add.existing(this.winTrigger);
+    this.add.existing(
+      new SceneMessage(this, WIDTH / 2, -lastWaveY, 'GLORY TO THE WINNER!')
+    );
+
     this.physics.world.setBounds(0, -topY, WIDTH, topY + HEIGHT);
     this.cameras.main.setBounds(0, -topY, WIDTH, topY + HEIGHT);
     this.cameras.main.startFollow(this.player, true, 0.05, 0.05, 0, HEIGHT / 3);
@@ -66,6 +76,9 @@ export class ShooterScene extends Phaser.Scene {
       (_bullet: Bullet, _enemy: Unit) => {
         _bullet.destroy();
         _enemy.hit();
+        if (_enemy.lives <= 0) {
+          this.killsCount += 1;
+        }
       }
     );
     this.physics.collide(
@@ -76,7 +89,7 @@ export class ShooterScene extends Phaser.Scene {
         _player.hit();
 
         if (_player.lives <= 0) {
-          this.isGameOver = true;
+          this.setGameOver(false);
         }
       }
     );
@@ -92,11 +105,39 @@ export class ShooterScene extends Phaser.Scene {
     this.physics.overlap(
       this.waveController.waveTriggers,
       this.player,
-      (_waveTrigger: WaveTrigger, _player: Unit) => {
+      (_waveTrigger: SceneTrigger, _player: Unit) => {
         _waveTrigger.destroy();
         _player.updateLives(_player.lives + 1);
         this.waveController.spawnEnemy();
       }
     );
+
+    this.physics.overlap(
+      this.winTrigger,
+      this.player,
+      (_winTrigger: SceneTrigger, _player: Unit) => {
+        _winTrigger.destroy();
+        this.setGameOver(true);
+      }
+    );
+  }
+
+  setGameOver(isWin: boolean) {
+    this.isGameOver = true;
+    if (isWin) {
+      const score = this.getScore();
+      this.add
+        .text(WIDTH / 2, (HEIGHT / 4) * 3, `SCORE - ${score}`, {
+          fontSize: '48px',
+        })
+        .setOrigin(0.5)
+        .setScrollFactor(0, 0);
+    }
+  }
+
+  getScore() {
+    const lives = this.player.lives * 1000;
+    const kills = this.killsCount * 500;
+    return lives + kills;
   }
 }
