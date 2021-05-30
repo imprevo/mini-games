@@ -13,6 +13,8 @@ type Wave = {
   lives: number;
 };
 
+const waveDeltaY = HEIGHT * 2;
+
 const waveConfig: Wave[][] = [
   [{ weaponType: WeaponType.PISTOL, lives: 1 }],
   [
@@ -42,12 +44,24 @@ const waveConfig: Wave[][] = [
   ],
 ];
 
+export class WaveTrigger extends Phaser.GameObjects.Rectangle {
+  body: Phaser.Physics.Arcade.Body;
+
+  constructor(scene: Phaser.Scene, x: number, y: number) {
+    super(scene, x, y, WIDTH, 10, 0xff0000, 0);
+    scene.add.existing(this);
+    scene.physics.add.existing(this);
+    this.setOrigin(0, 0.5);
+  }
+}
+
 export class ShooterScene extends Phaser.Scene {
   player: Unit;
   playerController: PlayerController;
   isGameOver = false;
 
-  wave = 0;
+  wave: number;
+  waveTriggers: Phaser.GameObjects.Group;
   enemies: Phaser.GameObjects.Group;
   enemiesController: EnemiesController;
 
@@ -61,10 +75,15 @@ export class ShooterScene extends Phaser.Scene {
     this.weaponsController = new WeaponController(this);
 
     this.player = new Unit(this, WIDTH / 2, (HEIGHT / 4) * 3, 90, 3);
-    this.player.setWeapon(
-      this.weaponsController.createWeapon(WeaponType.PISTOL)
+    this.weaponsController.createWeapon(
+      WeaponType.PISTOL,
+      new Phaser.Math.Vector2(WIDTH / 2, HEIGHT / 2)
     );
+
     this.playerController = new PlayerController(this, this.player);
+
+    this.waveTriggers = this.add.group();
+    this.addWaveTriggers();
 
     this.enemies = this.add.group();
     this.enemiesController = new EnemiesController(
@@ -73,11 +92,9 @@ export class ShooterScene extends Phaser.Scene {
       this.player
     );
 
-    // TODO: spawn on triggers
-    this.spawnEnemy();
-
-    this.physics.world.setBounds(0, -HEIGHT * 10, WIDTH, HEIGHT * 11);
-    this.cameras.main.setBounds(0, -HEIGHT * 10, WIDTH, HEIGHT * 11);
+    const topY = waveConfig.length * waveDeltaY;
+    this.physics.world.setBounds(0, -topY, WIDTH, topY + HEIGHT);
+    this.cameras.main.setBounds(0, -topY, WIDTH, topY + HEIGHT);
     this.cameras.main.startFollow(this.player, true, 0.05, 0.05, 0, HEIGHT / 4);
   }
 
@@ -117,6 +134,22 @@ export class ShooterScene extends Phaser.Scene {
         _unit.setWeapon(_weapon);
       }
     );
+
+    this.physics.overlap(
+      this.waveTriggers,
+      this.player,
+      (_waveTrigger: WaveTrigger, _player: Unit) => {
+        _waveTrigger.destroy();
+        this.spawnEnemy();
+      }
+    );
+  }
+
+  addWaveTriggers() {
+    this.wave = 0;
+    waveConfig.forEach((wave, index) => {
+      this.waveTriggers.add(new WaveTrigger(this, 0, -waveDeltaY * index));
+    });
   }
 
   spawnEnemy() {
@@ -128,7 +161,7 @@ export class ShooterScene extends Phaser.Scene {
 
     this.wave += 1;
 
-    const deltaX = HEIGHT / (currentWave.length + 1);
+    const deltaX = WIDTH / (currentWave.length + 1);
     const newY = this.player.y - HEIGHT;
 
     currentWave.forEach((wave, index) => {
