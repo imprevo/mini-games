@@ -111,16 +111,15 @@ export class WaveController {
     });
   }
 
-  spawnEnemy(y: number) {
+  spawnEnemy() {
     const currentWave = wavesConfig[this.wave];
 
     if (!currentWave) {
       return;
     }
 
-    this.wave += 1;
-
     const deltaX = WIDTH / (currentWave.enemies.length + 1);
+    const y = -waveDeltaY * (this.wave + 0.5);
 
     currentWave.enemies.forEach((config, index) => {
       const enemy = new Unit(
@@ -133,5 +132,7 @@ export class WaveController {
       enemy.setWeapon(this.weaponsController.createWeapon(config.weaponType));
       this.enemiesController.enemies.add(enemy);
     });
+
+    this.wave += 1;
   }
 }

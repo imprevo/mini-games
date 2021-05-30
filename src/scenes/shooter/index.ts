@@ -94,7 +94,7 @@ export class ShooterScene extends Phaser.Scene {
       this.player,
       (_waveTrigger: WaveTrigger, _player: Unit) => {
         _waveTrigger.destroy();
-        this.waveController.spawnEnemy(this.player.y - HEIGHT);
+        this.waveController.spawnEnemy();
       }
     );
   }
