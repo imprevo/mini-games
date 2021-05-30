@@ -5,14 +5,10 @@ export class EnemiesController {
   enemies: Phaser.GameObjects.Group;
   player: Unit;
 
-  constructor(
-    scene: Phaser.Scene,
-    enemies: Phaser.GameObjects.Group,
-    player: Unit
-  ) {
+  constructor(scene: Phaser.Scene, player: Unit) {
     this.scene = scene;
-    this.enemies = enemies;
     this.player = player;
+    this.enemies = scene.add.group();
   }
 
   update(time: number, delta: number) {
