@@ -5,9 +5,10 @@ export class Bullet extends Phaser.GameObjects.Rectangle {
   speed: number;
 
   constructor(scene: Phaser.Scene, x: number, y: number, speed: number) {
-    super(scene, x, y, 20, 4, 0xff0000);
+    super(scene, x, y, 8, 8, 0xff0000);
     scene.add.existing(this);
     scene.physics.add.existing(this);
+    this.body.setCircle(4);
     this.speed = speed;
   }
 
@@ -16,7 +17,7 @@ export class Bullet extends Phaser.GameObjects.Rectangle {
     vec.setToPolar(this.rotation, this.speed);
     this.body.setVelocity(vec.x, vec.y);
     this.scene.time.addEvent({
-      delay: 5000,
+      delay: 2000,
       callback: () => this.destroy(),
     });
   }
