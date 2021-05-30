@@ -28,17 +28,11 @@ export class Unit extends Phaser.GameObjects.Container {
     this.head = new UnitHead(scene, 0, 0);
     this.add(this.head);
 
-    this.lives = lives;
-    this.livesLabel = new Phaser.GameObjects.Text(
-      scene,
-      0,
-      0,
-      this.lives.toString(),
-      {
-        fontSize: '32px',
-        color: '0x000000',
-      }
-    ).setOrigin(0.5);
+    this.livesLabel = new Phaser.GameObjects.Text(scene, 0, 0, '0', {
+      fontSize: '32px',
+      color: '0x000000',
+    }).setOrigin(0.5);
+    this.updateLives(lives);
     this.livesLabel.angle = 90;
     this.add(this.livesLabel);
 
@@ -109,5 +103,10 @@ export class Unit extends Phaser.GameObjects.Container {
       this.dropWeapon();
       this.destroy();
     }
+  }
+
+  updateLives(lives: number) {
+    this.lives = lives;
+    this.livesLabel.text = lives.toString();
   }
 }

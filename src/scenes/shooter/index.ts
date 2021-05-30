@@ -29,7 +29,7 @@ export class ShooterScene extends Phaser.Scene {
   create() {
     this.weaponsController = new WeaponController(this);
 
-    this.player = new Unit(this, WIDTH / 2, (HEIGHT / 4) * 3, 90, 3);
+    this.player = new Unit(this, WIDTH / 2, (HEIGHT / 4) * 3, 90, 1);
     this.weaponsController.createWeapon(
       WeaponType.PISTOL,
       new Phaser.Math.Vector2(WIDTH / 2, HEIGHT / 2)
@@ -94,6 +94,7 @@ export class ShooterScene extends Phaser.Scene {
       this.player,
       (_waveTrigger: WaveTrigger, _player: Unit) => {
         _waveTrigger.destroy();
+        _player.updateLives(_player.lives + 1);
         this.waveController.spawnEnemy();
       }
     );
