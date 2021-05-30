@@ -10,14 +10,19 @@ type EnemyConfig = {
 };
 
 type WaveConfig = {
+  text: string;
   enemies: EnemyConfig[];
 };
 
 export const waveDeltaY = HEIGHT * 2;
 
 export const wavesConfig: WaveConfig[] = [
-  { enemies: [{ weaponType: WeaponType.PISTOL, lives: 1 }] },
   {
+    text: 'COME GET SOME',
+    enemies: [{ weaponType: WeaponType.PISTOL, lives: 1 }],
+  },
+  {
+    text: 'KILL THEM ALL!',
     enemies: [
       { weaponType: WeaponType.PISTOL, lives: 1 },
       { weaponType: WeaponType.PISTOL, lives: 1 },
@@ -25,6 +30,7 @@ export const wavesConfig: WaveConfig[] = [
     ],
   },
   {
+    text: 'WANT A SURPRISE?',
     enemies: [
       { weaponType: WeaponType.PISTOL, lives: 1 },
       { weaponType: WeaponType.RIFLE, lives: 1 },
@@ -32,6 +38,7 @@ export const wavesConfig: WaveConfig[] = [
     ],
   },
   {
+    text: 'TRY THIS',
     enemies: [
       { weaponType: WeaponType.RIFLE, lives: 1 },
       { weaponType: WeaponType.RIFLE, lives: 1 },
@@ -39,6 +46,7 @@ export const wavesConfig: WaveConfig[] = [
     ],
   },
   {
+    text: 'TOUGH GUY HUH?',
     enemies: [
       { weaponType: WeaponType.RIFLE, lives: 1 },
       { weaponType: WeaponType.SHOTGUN, lives: 1 },
@@ -46,6 +54,7 @@ export const wavesConfig: WaveConfig[] = [
     ],
   },
   {
+    text: "LET'S ROCK!",
     enemies: [
       { weaponType: WeaponType.SHOTGUN, lives: 1 },
       { weaponType: WeaponType.SHOTGUN, lives: 1 },
@@ -61,7 +70,15 @@ export class WaveTrigger extends Phaser.GameObjects.Rectangle {
     super(scene, x, y, WIDTH, 10, 0xff0000, 0);
     scene.add.existing(this);
     scene.physics.add.existing(this);
-    this.setOrigin(0, 0.5);
+    this.setOrigin(0.5);
+  }
+}
+
+export class WaveMessage extends Phaser.GameObjects.Text {
+  constructor(scene: Phaser.Scene, x: number, y: number, text: string) {
+    super(scene, x, y, text, { fontSize: '64px' });
+    this.setOrigin(0.5);
+    this.setDepth(0);
   }
 }
 
@@ -86,10 +103,11 @@ export class WaveController {
 
   addWaveTriggers() {
     this.wave = 0;
+    const x = WIDTH / 2;
     wavesConfig.forEach((wave, index) => {
-      this.waveTriggers.add(
-        new WaveTrigger(this.scene, 0, -waveDeltaY * index)
-      );
+      const y = -waveDeltaY * index;
+      this.waveTriggers.add(new WaveTrigger(this.scene, x, y));
+      this.scene.add.existing(new WaveMessage(this.scene, x, y, wave.text));
     });
   }
 
