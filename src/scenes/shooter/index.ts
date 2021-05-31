@@ -13,7 +13,7 @@ import { WeaponController, WeaponType } from './weapon-controller';
 export class ShooterScene extends Phaser.Scene {
   player: Unit;
   playerController: PlayerController;
-  isGameOver = false;
+  isGameOver: boolean;
   killsCount: number;
   winTrigger: SceneTrigger;
 
@@ -57,6 +57,10 @@ export class ShooterScene extends Phaser.Scene {
     this.physics.world.setBounds(0, -topY, WIDTH, topY + HEIGHT);
     this.cameras.main.setBounds(0, -topY, WIDTH, topY + HEIGHT);
     this.cameras.main.startFollow(this.player, true, 0.05, 0.05, 0, HEIGHT / 3);
+
+    this.input.keyboard.once('keydown_ESC', () => {
+      this.scene.start('MainScene');
+    });
   }
 
   update(time: number, delta: number) {

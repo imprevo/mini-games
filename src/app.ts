@@ -4,6 +4,7 @@ import { ArcanoidScene } from './scenes/arcanoid';
 import { FlappyBirdScene } from './scenes/flappy-bird';
 import { MainScene } from './scenes/main';
 import { PongScene } from './scenes/pong';
+import { ShooterScene } from './scenes/shooter';
 import { SnakeScene } from './scenes/snake';
 import { SpaceInvadersScene } from './scenes/space-invaders';
 
@@ -28,5 +29,6 @@ export const game = new Phaser.Game({
     SpaceInvadersScene,
     SnakeScene,
     FlappyBirdScene,
+    ShooterScene,
   ],
 });
