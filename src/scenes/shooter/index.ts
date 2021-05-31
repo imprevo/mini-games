@@ -64,12 +64,12 @@ export class ShooterScene extends Phaser.Scene {
   }
 
   update(time: number, delta: number) {
+    const keys = this.input.keyboard.createCursorKeys();
+    const spaceJustUp = Phaser.Input.Keyboard.JustUp(keys.space);
     if (!this.isGameOver) {
       this.playerController.update(time, delta);
       this.enemiesController.update(time, delta);
     } else {
-      const keys = this.input.keyboard.createCursorKeys();
-      const spaceJustUp = Phaser.Input.Keyboard.JustUp(keys.space);
       if (spaceJustUp) {
         this.scene.restart();
       }
@@ -134,10 +134,11 @@ export class ShooterScene extends Phaser.Scene {
 
   setGameOver(isWin: boolean) {
     this.isGameOver = true;
+
     if (isWin) {
       const score = this.getScore();
       this.add.existing(
-        new HUDMessage(this, WIDTH / 2, (HEIGHT / 4) * 3, `SCORE - ${score}`, {
+        new HUDMessage(this, WIDTH / 2, HEIGHT / 1.75, `SCORE - ${score}`, {
           fontSize: '48px',
         })
       );
@@ -145,16 +146,17 @@ export class ShooterScene extends Phaser.Scene {
       this.add.existing(
         new HUDMessage(this, WIDTH / 2, HEIGHT / 3, 'GAME OVER')
       );
-      this.add.existing(
-        new HUDMessage(
-          this,
-          WIDTH / 2,
-          (HEIGHT / 4) * 3,
-          'press SPACE to restart',
-          { fontSize: '48px' }
-        )
-      );
     }
+
+    this.add.existing(
+      new HUDMessage(
+        this,
+        WIDTH / 2,
+        (HEIGHT / 4) * 3,
+        'press SPACE to restart',
+        { fontSize: '48px' }
+      )
+    );
   }
 
   getScore() {
