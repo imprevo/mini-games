@@ -41,24 +41,27 @@ export class MainScene extends Phaser.Scene {
 
   create() {
     this.add
-      .text(WIDTH / 2, 200, 'CHOOSE GAME', { fontSize: '32px' })
+      .text(WIDTH / 2, 150, 'CHOOSE GAME', { fontSize: '32px' })
       .setOrigin(0.5);
 
     this.buttons = [
-      new MenuItem(this, WIDTH / 2, 300, 'PONG', () => {
+      new MenuItem(this, WIDTH / 2, 250, 'PONG', () => {
         this.scene.start('PongScene');
       }),
-      new MenuItem(this, WIDTH / 2, 350, 'ARCANOID', () => {
+      new MenuItem(this, WIDTH / 2, 300, 'ARCANOID', () => {
         this.scene.start('ArcanoidScene');
       }),
-      new MenuItem(this, WIDTH / 2, 400, 'SPACE INVADERS', () => {
+      new MenuItem(this, WIDTH / 2, 350, 'SPACE INVADERS', () => {
         this.scene.start('SpaceInvadersScene');
       }),
-      new MenuItem(this, WIDTH / 2, 450, 'SNAKE', () => {
+      new MenuItem(this, WIDTH / 2, 400, 'SNAKE', () => {
         this.scene.start('SnakeScene');
       }),
-      new MenuItem(this, WIDTH / 2, 500, 'FLAPPY BIRD', () => {
+      new MenuItem(this, WIDTH / 2, 450, 'FLAPPY BIRD', () => {
         this.scene.start('FlappyBirdScene');
+      }),
+      new MenuItem(this, WIDTH / 2, 500, 'SHOOTER', () => {
+        this.scene.start('ShooterScene');
       }),
     ];
 
