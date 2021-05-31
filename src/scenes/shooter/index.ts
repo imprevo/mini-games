@@ -2,8 +2,8 @@ import * as Phaser from 'phaser';
 import { Bullet } from './bullet';
 import { WIDTH, HEIGHT } from './config';
 import { EnemiesController } from './enemies-controller';
+import { HUDMessage, SceneMessage } from './messages';
 import { PlayerController } from './player-controller';
-import { SceneMessage } from './scene-message';
 import { SceneTrigger } from './scene-trigger';
 import { Unit } from './unit';
 import { wavesConfig, WaveController, waveDeltaY } from './wave-controller';
@@ -63,6 +63,12 @@ export class ShooterScene extends Phaser.Scene {
     if (!this.isGameOver) {
       this.playerController.update(time, delta);
       this.enemiesController.update(time, delta);
+    } else {
+      const keys = this.input.keyboard.createCursorKeys();
+      const spaceJustUp = Phaser.Input.Keyboard.JustUp(keys.space);
+      if (spaceJustUp) {
+        this.scene.restart();
+      }
     }
 
     this.physics.collide(this.player, this.enemiesController.enemies);
@@ -126,12 +132,24 @@ export class ShooterScene extends Phaser.Scene {
     this.isGameOver = true;
     if (isWin) {
       const score = this.getScore();
-      this.add
-        .text(WIDTH / 2, (HEIGHT / 4) * 3, `SCORE - ${score}`, {
+      this.add.existing(
+        new HUDMessage(this, WIDTH / 2, (HEIGHT / 4) * 3, `SCORE - ${score}`, {
           fontSize: '48px',
         })
-        .setOrigin(0.5)
-        .setScrollFactor(0, 0);
+      );
+    } else {
+      this.add.existing(
+        new HUDMessage(this, WIDTH / 2, HEIGHT / 3, 'GAME OVER')
+      );
+      this.add.existing(
+        new HUDMessage(
+          this,
+          WIDTH / 2,
+          (HEIGHT / 4) * 3,
+          'press SPACE to restart',
+          { fontSize: '48px' }
+        )
+      );
     }
   }
 

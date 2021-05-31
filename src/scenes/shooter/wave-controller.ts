@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import { WIDTH, HEIGHT } from './config';
 import { EnemiesController } from './enemies-controller';
-import { SceneMessage } from './scene-message';
+import { SceneMessage } from './messages';
 import { SceneTrigger } from './scene-trigger';
 import { Unit } from './unit';
 import { WeaponController, WeaponType } from './weapon-controller';
