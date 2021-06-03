@@ -35,7 +35,7 @@ export class EnemiesController {
         if (distance < 300) {
           enemy.fire();
         } else {
-          this.scene.physics.moveToObject(enemy, this.player, 10 * delta);
+          this.scene.physics.moveToObject(enemy, this.player, 8 * delta);
         }
       }
     });

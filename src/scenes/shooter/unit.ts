@@ -39,7 +39,7 @@ export class Unit extends Phaser.GameObjects.Container {
     this.angle = -angle;
 
     this.body.useDamping = true;
-    this.body.setDrag(0.97, 0.97);
+    this.body.setDrag(0.3, 0.3);
     this.body.setCircle(25, -25, -25);
     this.body.setCollideWorldBounds(true);
     this.body.onWorldBounds = true;
