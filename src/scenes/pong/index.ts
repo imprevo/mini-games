@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { HEIGHT, WIDTH } from '../../config';
+import { Scenes, HEIGHT, WIDTH } from '../../config';
 
 const BALL_SPEED = 200;
 const BALL_SPEED_RATE = 1.15;
@@ -31,7 +31,7 @@ export class PongScene extends Phaser.Scene {
   side = 1;
 
   constructor() {
-    super('PongScene');
+    super(Scenes.PONG);
   }
 
   create() {
@@ -89,7 +89,7 @@ export class PongScene extends Phaser.Scene {
     this.physics.add.existing(this.ball);
 
     this.input.keyboard.on('keydown_ESC', () => {
-      this.scene.start('MainScene');
+      this.scene.start(Scenes.MAIN);
     });
   }
 

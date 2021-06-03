@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import { Scenes } from '../../config';
 import { Bird } from './bird';
 import { WIDTH, HEIGHT } from './config';
 import { Pipes } from './pipes';
@@ -14,7 +15,7 @@ export class FlappyBirdScene extends Phaser.Scene {
   scoreLabel: Phaser.GameObjects.Text;
 
   constructor() {
-    super('FlappyBirdScene');
+    super(Scenes.FLAPPY_BIRD);
   }
 
   create() {
@@ -51,7 +52,7 @@ export class FlappyBirdScene extends Phaser.Scene {
     });
 
     this.input.keyboard.on('keydown_ESC', () => {
-      this.scene.start('MainScene');
+      this.scene.start(Scenes.MAIN);
     });
   }
 

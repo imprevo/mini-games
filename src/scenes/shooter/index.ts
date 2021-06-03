@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import { Scenes } from '../../config';
 import { Bullet } from './bullet';
 import { WIDTH, HEIGHT } from './config';
 import { EnemiesController } from './enemies-controller';
@@ -22,7 +23,7 @@ export class ShooterScene extends Phaser.Scene {
   waveController: WaveController;
 
   constructor() {
-    super('ShooterScene');
+    super(Scenes.SHOOTER);
   }
 
   create() {
@@ -59,7 +60,7 @@ export class ShooterScene extends Phaser.Scene {
     this.cameras.main.startFollow(this.player, true, 0.05, 0.05, 0, HEIGHT / 3);
 
     this.input.keyboard.once('keydown_ESC', () => {
-      this.scene.start('MainScene');
+      this.scene.start(Scenes.MAIN);
     });
   }
 

@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { HEIGHT, WIDTH } from '../../config';
+import { Scenes, HEIGHT, WIDTH } from '../../config';
 
 const BALL_SPEED = 200;
 const LIVES = 3;
@@ -32,7 +32,7 @@ export class ArcanoidScene extends Phaser.Scene {
   level = 1;
 
   constructor() {
-    super('ArcanoidScene');
+    super(Scenes.ARCANOID);
   }
 
   create() {
@@ -81,7 +81,7 @@ export class ArcanoidScene extends Phaser.Scene {
     this.addBricks();
 
     this.input.keyboard.on('keydown_ESC', () => {
-      this.scene.start('MainScene');
+      this.scene.start(Scenes.MAIN);
     });
   }
 

@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { HEIGHT, WIDTH } from '../../config';
+import { Scenes, HEIGHT, WIDTH } from '../../config';
 
 const PLAYER_SPEED = 300;
 const BULLET_SPEED = 500;
@@ -188,7 +188,7 @@ export class SpaceInvadersScene extends Phaser.Scene {
   level = 1;
 
   constructor() {
-    super('SpaceInvadersScene');
+    super(Scenes.SPACE_INVADERS);
   }
 
   create() {
@@ -222,7 +222,7 @@ export class SpaceInvadersScene extends Phaser.Scene {
     this.enemies.addEnemies();
 
     this.input.keyboard.on('keydown_ESC', () => {
-      this.scene.start('MainScene');
+      this.scene.start(Scenes.MAIN);
     });
   }
 

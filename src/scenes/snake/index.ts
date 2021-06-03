@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import { Scenes } from '../../config';
 import { STEP, WIDTH, HEIGHT } from './config';
 import { FruitGroup } from './fruit-group';
 import { Snake } from './snake';
@@ -13,7 +14,7 @@ export class SnakeScene extends Phaser.Scene {
   scoreLabel: Phaser.GameObjects.Text;
 
   constructor() {
-    super('SnakeScene');
+    super(Scenes.SNAKE);
   }
 
   create() {
@@ -36,7 +37,7 @@ export class SnakeScene extends Phaser.Scene {
     this.updateScore(0);
 
     this.input.keyboard.on('keydown_ESC', () => {
-      this.scene.start('MainScene');
+      this.scene.start(Scenes.MAIN);
     });
   }
 

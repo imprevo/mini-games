@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { WIDTH } from '../config';
+import { Scenes, WIDTH } from '../config';
 
 const STYLE_DEFAULT = {
   color: '#fff',
@@ -36,7 +36,7 @@ export class MainScene extends Phaser.Scene {
   buttons: MenuItem[];
 
   constructor() {
-    super('MainScene');
+    super(Scenes.MAIN);
   }
 
   create() {
@@ -46,22 +46,22 @@ export class MainScene extends Phaser.Scene {
 
     this.buttons = [
       new MenuItem(this, WIDTH / 2, 250, 'PONG', () => {
-        this.scene.start('PongScene');
+        this.scene.start(Scenes.PONG);
       }),
       new MenuItem(this, WIDTH / 2, 300, 'ARCANOID', () => {
-        this.scene.start('ArcanoidScene');
+        this.scene.start(Scenes.ARCANOID);
       }),
       new MenuItem(this, WIDTH / 2, 350, 'SPACE INVADERS', () => {
-        this.scene.start('SpaceInvadersScene');
+        this.scene.start(Scenes.SPACE_INVADERS);
       }),
       new MenuItem(this, WIDTH / 2, 400, 'SNAKE', () => {
-        this.scene.start('SnakeScene');
+        this.scene.start(Scenes.SNAKE);
       }),
       new MenuItem(this, WIDTH / 2, 450, 'FLAPPY BIRD', () => {
-        this.scene.start('FlappyBirdScene');
+        this.scene.start(Scenes.FLAPPY_BIRD);
       }),
       new MenuItem(this, WIDTH / 2, 500, 'SHOOTER', () => {
-        this.scene.start('ShooterScene');
+        this.scene.start(Scenes.SHOOTER);
       }),
     ];
 
