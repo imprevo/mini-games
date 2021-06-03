@@ -31,10 +31,6 @@ export class ArcanoidScene extends Phaser.Scene {
   lives = LIVES;
   level = 1;
 
-  constructor() {
-    super(Scenes.ARCANOID);
-  }
-
   create() {
     this.isGameOver = false;
     this.isStart = false;

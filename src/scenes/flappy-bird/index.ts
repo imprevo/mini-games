@@ -14,10 +14,6 @@ export class FlappyBirdScene extends Phaser.Scene {
   score: number;
   scoreLabel: Phaser.GameObjects.Text;
 
-  constructor() {
-    super(Scenes.FLAPPY_BIRD);
-  }
-
   create() {
     this.physics.world.setBounds(0, 0, Infinity, HEIGHT);
     this.cameras.main.setBounds(0, 0, Infinity, 0);

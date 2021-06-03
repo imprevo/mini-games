@@ -13,10 +13,6 @@ export class SnakeScene extends Phaser.Scene {
   score: number;
   scoreLabel: Phaser.GameObjects.Text;
 
-  constructor() {
-    super(Scenes.SNAKE);
-  }
-
   create() {
     this.snake?.destroy(true);
     this.snake = new Snake(this, STEP * 5, STEP * 5);

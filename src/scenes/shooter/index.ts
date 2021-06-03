@@ -22,10 +22,6 @@ export class ShooterScene extends Phaser.Scene {
   weaponsController: WeaponController;
   waveController: WaveController;
 
-  constructor() {
-    super(Scenes.SHOOTER);
-  }
-
   create() {
     this.isGameOver = false;
     this.killsCount = 0;

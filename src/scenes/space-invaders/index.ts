@@ -187,10 +187,6 @@ export class SpaceInvadersScene extends Phaser.Scene {
   lives = LIVES;
   level = 1;
 
-  constructor() {
-    super(Scenes.SPACE_INVADERS);
-  }
-
   create() {
     this.isGameOver = false;
 

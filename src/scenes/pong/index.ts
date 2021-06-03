@@ -30,10 +30,6 @@ export class PongScene extends Phaser.Scene {
   isStart = false;
   side = 1;
 
-  constructor() {
-    super(Scenes.PONG);
-  }
-
   create() {
     this.player1Score = 0;
     this.player2Score = 0;

@@ -35,10 +35,6 @@ export class MainScene extends Phaser.Scene {
   activeButton = 0;
   buttons: MenuItem[];
 
-  constructor() {
-    super(Scenes.MAIN);
-  }
-
   create() {
     this.add
       .text(WIDTH / 2, 150, 'CHOOSE GAME', { fontSize: '32px' })

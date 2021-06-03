@@ -1,12 +1,6 @@
 import * as Phaser from 'phaser';
 import { HEIGHT, WIDTH } from './config';
-import { ArcanoidScene } from './scenes/arcanoid';
-import { FlappyBirdScene } from './scenes/flappy-bird';
-import { MainScene } from './scenes/main';
-import { PongScene } from './scenes/pong';
-import { ShooterScene } from './scenes/shooter';
-import { SnakeScene } from './scenes/snake';
-import { SpaceInvadersScene } from './scenes/space-invaders';
+import { StartScene } from './scenes/start';
 
 const root = document.getElementById('game');
 
@@ -25,13 +19,5 @@ export const game = new Phaser.Game({
     },
   },
   backgroundColor: '#000000',
-  scene: [
-    MainScene,
-    PongScene,
-    ArcanoidScene,
-    SpaceInvadersScene,
-    SnakeScene,
-    FlappyBirdScene,
-    ShooterScene,
-  ],
+  scene: StartScene,
 });
