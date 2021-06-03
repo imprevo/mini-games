@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { HEIGHT, WIDTH } from '../config';
+import { HEIGHT, WIDTH } from '../../config';
 
 const PLAYER_SPEED = 300;
 const BULLET_SPEED = 500;
