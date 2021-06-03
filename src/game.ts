@@ -8,8 +8,11 @@ import { ShooterScene } from './scenes/shooter';
 import { SnakeScene } from './scenes/snake';
 import { SpaceInvadersScene } from './scenes/space-invaders';
 
+const root = document.getElementById('game');
+
 export const game = new Phaser.Game({
-  title: 'Sample',
+  parent: root,
+  title: 'Mini games',
   type: Phaser.AUTO,
   scale: {
     width: WIDTH,
