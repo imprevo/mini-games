@@ -28,7 +28,7 @@ npm install
 
 ## Usage
 
-Runs the app in the development mode. Open http://localhost:8080 to view it in the browser.
+Runs the app in the development mode. Open http://localhost:1234 to view it in the browser.
 
 ```sh
 npm run dev
