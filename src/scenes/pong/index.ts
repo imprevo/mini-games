@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
-import { Scenes, HEIGHT, WIDTH } from '../../config';
+import { HEIGHT, WIDTH } from '../../config';
+import { subscribeToExit } from '../../utils/menu';
 
 const BALL_SPEED = 200;
 const BALL_SPEED_RATE = 1.15;
@@ -39,12 +40,12 @@ export class PongScene extends Phaser.Scene {
     this.add.line(WIDTH / 2, 0, 0, 0, 0, HEIGHT, 0xffffff).setOrigin(0, 0);
     this.player1ScoreLabel = this.add
       .text(WIDTH / 4, HEIGHT / 2, this.player1Score.toString(), {
-        fontSize: HEIGHT / 4,
+        fontSize: `${HEIGHT / 4}px`,
       })
       .setOrigin(0.5);
     this.player2ScoreLabel = this.add
       .text(WIDTH - WIDTH / 4, HEIGHT / 2, this.player2Score.toString(), {
-        fontSize: HEIGHT / 4,
+        fontSize: `${HEIGHT / 4}px`,
       })
       .setOrigin(0.5);
 
@@ -84,9 +85,7 @@ export class PongScene extends Phaser.Scene {
     ) as GameObjectWithPhysics;
     this.physics.add.existing(this.ball);
 
-    this.input.keyboard.on('keydown_ESC', () => {
-      this.scene.start(Scenes.MAIN);
-    });
+    subscribeToExit(this);
   }
 
   update() {

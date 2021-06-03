@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
-import { Scenes, HEIGHT, WIDTH } from '../../config';
+import { HEIGHT, WIDTH } from '../../config';
+import { subscribeToExit } from '../../utils/menu';
 
 const PLAYER_SPEED = 300;
 const BULLET_SPEED = 500;
@@ -197,7 +198,7 @@ export class SpaceInvadersScene extends Phaser.Scene {
     this.updateLevel(1);
 
     this.gameOverLabel = this.add
-      .text(WIDTH / 2, HEIGHT / 2, 'YOU LOOSE', { fontSize: 30 })
+      .text(WIDTH / 2, HEIGHT / 2, 'YOU LOOSE', { fontSize: '30px' })
       .setOrigin(0.5)
       .setDepth(1);
     this.gameOverLabel.setVisible(false);
@@ -217,9 +218,7 @@ export class SpaceInvadersScene extends Phaser.Scene {
     this.enemies = new EnemyGroup(this, this.enemyBullets);
     this.enemies.addEnemies();
 
-    this.input.keyboard.on('keydown_ESC', () => {
-      this.scene.start(Scenes.MAIN);
-    });
+    subscribeToExit(this);
   }
 
   update(time: number) {

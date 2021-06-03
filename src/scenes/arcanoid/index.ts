@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
-import { Scenes, HEIGHT, WIDTH } from '../../config';
+import { HEIGHT, WIDTH } from '../../config';
+import { subscribeToExit } from '../../utils/menu';
 
 const BALL_SPEED = 200;
 const LIVES = 3;
@@ -42,7 +43,7 @@ export class ArcanoidScene extends Phaser.Scene {
     this.updateLevel(1);
 
     this.gameOverLabel = this.add
-      .text(WIDTH / 2, (HEIGHT / 3) * 2, 'YOU LOOSE', { fontSize: 30 })
+      .text(WIDTH / 2, (HEIGHT / 3) * 2, 'YOU LOOSE', { fontSize: '30px' })
       .setOrigin(0.5);
     // .setVisible(false);
     this.gameOverLabel.setVisible(false);
@@ -76,9 +77,7 @@ export class ArcanoidScene extends Phaser.Scene {
     this.bricks = this.add.group();
     this.addBricks();
 
-    this.input.keyboard.on('keydown_ESC', () => {
-      this.scene.start(Scenes.MAIN);
-    });
+    subscribeToExit(this);
   }
 
   update() {

@@ -61,18 +61,16 @@ export class MainScene extends Phaser.Scene {
       }),
     ];
 
-    this.input.keyboard.on('keydown_UP', () => {
-      this.changeActive(-1);
-    });
-
-    this.input.keyboard.on('keydown_DOWN', () => {
-      this.changeActive(1);
-    });
-
-    this.input.keyboard.on('keydown_ENTER', () => {
-      const button = this.buttons[this.activeButton];
-      if (button) {
-        button.action();
+    this.input.keyboard.on('keydown', (event: KeyboardEvent) => {
+      switch (event.code) {
+        case 'ArrowUp':
+          return this.changeActive(-1);
+        case 'ArrowDown':
+          return this.changeActive(1);
+        case 'Enter':
+          return this.pressActive();
+        default:
+          return;
       }
     });
 
@@ -89,6 +87,13 @@ export class MainScene extends Phaser.Scene {
     }
 
     this.updateMenu();
+  }
+
+  pressActive() {
+    const button = this.buttons[this.activeButton];
+    if (button) {
+      button.action();
+    }
   }
 
   updateMenu() {

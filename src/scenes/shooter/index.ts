@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { Scenes } from '../../config';
+import { subscribeToExit } from '../../utils/menu';
 import { Bullet } from './bullet';
 import { WIDTH, HEIGHT } from './config';
 import { EnemiesController } from './enemies-controller';
@@ -55,9 +55,7 @@ export class ShooterScene extends Phaser.Scene {
     this.cameras.main.setBounds(0, -topY, WIDTH, topY + HEIGHT);
     this.cameras.main.startFollow(this.player, true, 0.05, 0.05, 0, HEIGHT / 3);
 
-    this.input.keyboard.once('keydown_ESC', () => {
-      this.scene.start(Scenes.MAIN);
-    });
+    subscribeToExit(this);
   }
 
   update(time: number, delta: number) {

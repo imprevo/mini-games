@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { Scenes } from '../../config';
+import { subscribeToExit } from '../../utils/menu';
 import { STEP, WIDTH, HEIGHT } from './config';
 import { FruitGroup } from './fruit-group';
 import { Snake } from './snake';
@@ -23,7 +23,7 @@ export class SnakeScene extends Phaser.Scene {
     this.isGameOver = false;
     this.gameOverLabel?.destroy(true);
     this.gameOverLabel = this.add
-      .text(WIDTH / 2, HEIGHT / 2, 'YOU LOOSE', { fontSize: 30 })
+      .text(WIDTH / 2, HEIGHT / 2, 'YOU LOOSE', { fontSize: '30px' })
       .setOrigin(0.5)
       .setDepth(1)
       .setVisible(false);
@@ -32,9 +32,7 @@ export class SnakeScene extends Phaser.Scene {
     this.scoreLabel = this.add.text(20, 20, '').setDepth(1);
     this.updateScore(0);
 
-    this.input.keyboard.on('keydown_ESC', () => {
-      this.scene.start(Scenes.MAIN);
-    });
+    subscribeToExit(this);
   }
 
   update(time: number) {
