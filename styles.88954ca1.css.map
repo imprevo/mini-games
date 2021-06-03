@@ -1,0 +1,1 @@
+{"version":3,"sources":["styles.css"],"names":[],"mappings":"AAAA,iBAGE,QAAS,CACT,SACF","file":"styles.88954ca1.css","sourceRoot":"../src","sourcesContent":["html,\nbody,\ncanvas {\n  margin: 0;\n  padding: 0;\n}\n"]}
